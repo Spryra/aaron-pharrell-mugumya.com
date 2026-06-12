@@ -1,58 +1,30 @@
-'use client';
+import React from 'react'
+import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { db } from '@/lib/db/client'
+import { experience as experienceTable } from '@/lib/db/schema'
+import { desc } from 'drizzle-orm'
+import { ExperienceTimeline } from '@/components/ExperienceTimeline'
+import { ThemeToggle } from '@/components/ThemeToggle'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import type { Experience } from '@/lib/db/schema'
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { ExperienceTimeline } from '@/components/ExperienceTimeline';
-import type { Experience } from '@/lib/db/schema';
+export default async function ExperiencePage() {
+  let experiences: Experience[] = []
+  let error: string | null = null
 
-function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    setIsDark(isDarkMode);
-  }, []);
-
-  const toggle = () => {
-    const html = document.documentElement;
-    html.classList.toggle('dark');
-    setIsDark(!isDark);
-    localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-  };
-
-  return (
-    <button
-      onClick={toggle}
-      className="p-2 rounded-lg bg-light-surface dark:bg-dark-surface hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent transition"
-      aria-label="Toggle theme"
-    >
-      {isDark ? '☀️' : '🌙'}
-    </button>
-  );
-}
-
-export default function ExperiencePage() {
-  const [experienceData, setExperienceData] = useState<Experience[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/experience');
-        if (response.ok) {
-          const data = await response.json();
-          setExperienceData(data);
-        }
-      } catch (error) {
-        // Error handled silently
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  try {
+    experiences = await db
+      .select()
+      .from(experienceTable)
+      .orderBy(desc(experienceTable.sortOrder))
+      .limit(10)
+  } catch (err) {
+    error = 'Failed to load experiences. Please refresh the page.'
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Experience fetch error:', err)
+    }
+  }
 
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors">
@@ -104,18 +76,14 @@ export default function ExperiencePage() {
       {/* Section 2: Experience Timeline */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          {loading ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-12"
-            >
-              <p className="text-light-text-secondary dark:text-dark-text-secondary">
-                Loading experience...
-              </p>
-            </motion.div>
-          ) : experienceData && experienceData.length > 0 ? (
-            <ExperienceTimeline experiences={experienceData} />
+          {error ? (
+            <div className="bg-red-50 dark:bg-red-950 p-4 rounded text-red-800 dark:text-red-200">
+              {error}
+            </div>
+          ) : experiences.length > 0 ? (
+            <ErrorBoundary fallback="Failed to load experience timeline">
+              <ExperienceTimeline experiences={experiences} />
+            </ErrorBoundary>
           ) : (
             <motion.div
               initial={{ opacity: 0 }}
@@ -173,5 +141,5 @@ export default function ExperiencePage() {
         </div>
       </footer>
     </main>
-  );
+  )
 }

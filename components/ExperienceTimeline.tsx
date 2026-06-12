@@ -1,20 +1,21 @@
-'use client';
+'use client'
 
-import React from 'react';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import type { Experience } from '@/lib/db/schema';
+import React from 'react'
+import Image from 'next/image'
+import { motion } from 'framer-motion'
+import type { Experience } from '@/lib/db/schema'
 
 interface ExperienceTimelineProps {
-  experiences: Experience[];
+  experiences: Experience[]
 }
 
 export function ExperienceTimeline({ experiences }: ExperienceTimelineProps) {
+  // Data is already sorted server-side, but keep sorting for client-side safety
   const sortedExperiences = [...experiences].sort((a, b) => {
-    const aDate = new Date(a.startDate);
-    const bDate = new Date(b.startDate);
-    return bDate.getTime() - aDate.getTime();
-  });
+    const aOrder = a.sortOrder ?? 0
+    const bOrder = b.sortOrder ?? 0
+    return bOrder - aOrder
+  })
 
   return (
     <div className="space-y-12">
