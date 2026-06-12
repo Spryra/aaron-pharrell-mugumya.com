@@ -1,31 +1,42 @@
-import React from 'react'
+'use client'
+
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { db } from '@/lib/db/client'
-import { experience as experienceTable } from '@/lib/db/schema'
-import { desc } from 'drizzle-orm'
 import { ExperienceTimeline } from '@/components/ExperienceTimeline'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import type { Experience } from '@/lib/db/schema'
 
-export default async function ExperiencePage() {
-  let experiences: Experience[] = []
-  let error: string | null = null
+export default function ExperiencePage() {
+  const [experiences, setExperiences] = useState<Experience[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  try {
-    experiences = await db
-      .select()
-      .from(experienceTable)
-      .orderBy(desc(experienceTable.sortOrder))
-      .limit(10)
-  } catch (err) {
-    error = 'Failed to load experiences. Please refresh the page.'
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Experience fetch error:', err)
+  useEffect(() => {
+    const fetchExperiences = async () => {
+      try {
+        const response = await fetch('/api/experience')
+        if (!response.ok) throw new Error('Failed to fetch')
+        const data = await response.json()
+        setExperiences(data)
+      } catch (err) {
+        setError('Failed to load experiences. Please refresh the page.')
+        console.error('Experience fetch error:', err)
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+    fetchExperiences()
+  }, [])
 
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-white dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors flex items-center justify-center">
+        <p>Loading...</p>
+      </main>
+    )
+  }
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors">
       {/* Navigation */}
