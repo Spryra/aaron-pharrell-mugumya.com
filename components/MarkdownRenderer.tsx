@@ -14,7 +14,17 @@ const md = markdownIt({
 
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const rawHtml = md.render(content);
-  const cleanHtml = DOMPurify.sanitize(rawHtml);
+  const cleanHtml = DOMPurify.sanitize(rawHtml, {
+    ALLOWED_TAGS: [
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'p', 'a', 'strong', 'em', 'code', 'pre',
+      'ul', 'ol', 'li', 'blockquote', 'hr',
+      'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'br'
+    ],
+    ALLOWED_ATTR: ['href', 'title', 'alt', 'src', 'class'],
+    ALLOW_DATA_ATTR: false,
+    RETURN_DOM: false,
+  });
 
   return (
     <div

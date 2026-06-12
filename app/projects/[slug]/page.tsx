@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db/client';
-import { projects as projectsTable } from '@/lib/db/schema';
+import { projects as projectsTable, Project } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import ProjectDetailHero from '@/components/ProjectDetailHero';
@@ -32,8 +32,11 @@ async function getAllProjects() {
   }
 }
 
-function getRelatedProjects(currentSlug: string, allProjects: any[]) {
-  return allProjects.filter((p) => p.slug !== currentSlug).slice(0, 3);
+function getRelatedProjects(currentSlug: string, allProjects: Project[]) {
+  return allProjects
+    .filter((p) => p.slug !== currentSlug)
+    .sort((a, b) => (b.featured ? 1 : -1))
+    .slice(0, 3);
 }
 
 export async function generateMetadata({
@@ -100,21 +103,25 @@ export default async function ProjectDetailPage({
       </nav>
 
       {/* Breadcrumb */}
-      <section className="pt-28 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-2 text-sm text-light-text-secondary dark:text-dark-text-secondary">
+      <nav aria-label="Breadcrumb" className="pt-28 pb-8 px-4 sm:px-6 lg:px-8">
+        <ol className="max-w-6xl mx-auto flex items-center gap-2 text-sm text-light-text-secondary dark:text-dark-text-secondary">
+          <li>
             <Link href="/" className="hover:text-light-accent dark:hover:text-dark-accent transition">
               Home
             </Link>
-            <span>/</span>
+          </li>
+          <li aria-hidden="true">/</li>
+          <li>
             <Link href="/projects" className="hover:text-light-accent dark:hover:text-dark-accent transition">
               Projects
             </Link>
-            <span>/</span>
-            <span className="text-light-text dark:text-dark-text font-medium">{project.title}</span>
-          </div>
-        </div>
-      </section>
+          </li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page" className="text-light-text dark:text-dark-text font-medium">
+            {project.title}
+          </li>
+        </ol>
+      </nav>
 
       {/* Section 1: Project Hero */}
       <section className="py-12 px-4 sm:px-6 lg:px-8">
