@@ -27,14 +27,28 @@ export default function ProjectDetailOverview({ project }: ProjectDetailOverview
 
             {project.techStack && project.techStack.length > 0 ? (
               <div className="flex flex-wrap gap-3">
-                {project.techStack.map((tech, idx) => (
-                  <span
-                    key={idx}
-                    className="px-4 py-2 bg-light-accent/10 dark:bg-dark-accent/10 text-light-accent dark:text-dark-accent rounded-lg border border-light-accent/20 dark:border-dark-accent/20 font-medium text-sm"
-                  >
-                    {tech}
-                  </span>
-                ))}
+                {(() => {
+                  const displayTechs = project.techStack.slice(0, 4);
+                  const hiddenCount = project.techStack.length - displayTechs.length;
+
+                  return (
+                    <>
+                      {displayTechs.map((tech, idx) => (
+                        <span
+                          key={idx}
+                          className="px-4 py-2 bg-light-accent/10 dark:bg-dark-accent/10 text-light-accent dark:text-dark-accent rounded-lg border border-light-accent/20 dark:border-dark-accent/20 font-medium text-sm"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                      {hiddenCount > 0 && (
+                        <span className="px-4 py-2 bg-light-accent/10 dark:bg-dark-accent/10 text-light-accent dark:text-dark-accent rounded-lg border border-light-accent/20 dark:border-dark-accent/20 font-medium text-sm">
+                          +{hiddenCount} more
+                        </span>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             ) : (
               <p className="text-light-text-secondary dark:text-dark-text-secondary">

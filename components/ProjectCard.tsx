@@ -22,7 +22,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <Link href={`/projects/${project.slug}`}>
         <div className="h-full rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 bg-white dark:bg-dark-bg border border-light-border dark:border-dark-border hover:border-light-accent dark:hover:border-dark-accent cursor-pointer">
           {/* Image Section */}
-          <div className="relative w-full h-56 sm:h-48 overflow-hidden bg-light-surface dark:bg-dark-surface">
+          <div className="relative w-full h-48 sm:h-56 overflow-hidden bg-light-surface dark:bg-dark-surface">
             <Image
               src={project.imageUrl}
               alt={project.imageAlt}

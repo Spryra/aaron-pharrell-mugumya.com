@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { db } from '@/lib/db/client';
 import { projects as projectsTable } from '@/lib/db/schema';
 import { desc } from 'drizzle-orm';
@@ -64,13 +65,38 @@ export default async function ProjectsPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           {featuredProjects.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredProjects.map((project, idx) => (
-                <div key={project.id} style={{ animationDelay: `${idx * 0.1}s` }}>
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                    delayChildren: 0.1,
+                  },
+                },
+              }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {featuredProjects.map((project) => (
+                <motion.div
+                  key={project.id}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.6 },
+                    },
+                  }}
+                >
                   <ProjectCard project={project} />
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           ) : (
             <div className="text-center py-12">
               <p className="text-light-text-secondary dark:text-dark-text-secondary text-lg">
