@@ -41,6 +41,8 @@ log() {
     shift
     local message="$@"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    # Ensure directory exists before writing
+    mkdir -p "$(dirname "${LOG_FILE}")" 2>/dev/null
     echo "[${timestamp}] [${level}] ${message}" | tee -a "${LOG_FILE}"
 }
 
@@ -136,6 +138,25 @@ calculate_directory_size() {
     fi
 }
 
+parse_database_url() {
+    log_info "Parsing DATABASE_URL securely..."
+
+    local db_url="${DATABASE_URL}"
+
+    # Extract password and set PGPASSWORD environment variable
+    # Format: postgresql://user:password@host:port/database
+    export PGPASSWORD="${db_url##*:}"
+    PGPASSWORD="${PGPASSWORD%%@*}"
+
+    # Extract other components
+    DB_HOST=$(echo "$db_url" | sed -E 's|.*@([^:/@]+).*|\1|')
+    DB_PORT=$(echo "$db_url" | sed -E 's|.*:([0-9]+)/.*|\1|' || echo "5432")
+    DB_NAME=$(echo "$db_url" | sed -E 's|.*/([^?]+).*|\1|')
+    DB_USER=$(echo "$db_url" | sed -E 's|.*://([^:]+):.*|\1|')
+
+    log_info "Database credentials extracted (password protected)"
+}
+
 perform_backup() {
     log_info "Starting database backup..."
     log_info "Output file: ${BACKUP_PATH}"
@@ -143,8 +164,17 @@ perform_backup() {
     local temp_file="${BACKUP_PATH}.tmp"
     local start_time=$(date +%s)
 
-    # Perform the backup with error handling
-    if pg_dump "$DATABASE_URL" | gzip > "${temp_file}" 2>> "${LOG_FILE}"; then
+    # Perform the backup with error handling using parsed credentials
+    if pg_dump -h "$DB_HOST" -U "$DB_USER" -p "$DB_PORT" -d "$DB_NAME" 2>>"${LOG_FILE}" | \
+         gzip -c 2>>"${LOG_FILE}" > "${temp_file}"; then
+
+        # Verify the resulting gzip file is valid
+        if ! gzip -t "${temp_file}" 2>>"${LOG_FILE}"; then
+            log_error "Backup file is corrupted or invalid gzip"
+            rm -f "${temp_file}"
+            exit 1
+        fi
+
         # Rename temp file to final destination
         mv "${temp_file}" "${BACKUP_PATH}"
 
@@ -156,6 +186,16 @@ perform_backup() {
         log_info "File: ${BACKUP_FILE}"
         log_info "Size: ${file_size}"
         log_info "Duration: ${duration} seconds"
+
+        # Verify backup file integrity
+        log_info "Verifying backup file integrity..."
+        if gzip -t "${BACKUP_PATH}" 2>> "${LOG_FILE}"; then
+            log_success "Backup file integrity verified"
+        else
+            log_error "Backup file is corrupted or invalid gzip"
+            rm -f "${BACKUP_PATH}"
+            exit 1
+        fi
 
         return 0
     else
@@ -174,20 +214,23 @@ cleanup_old_backups() {
     log_info "Cleaning up backups older than 30 days..."
 
     local deleted_count=0
-    local total_freed=0
+    local total_freed_bytes=0
 
     # Find and delete backups older than 30 days
     while IFS= read -r old_file; do
         if [ -f "${old_file}" ]; then
+            local file_size_bytes=$(stat -f%z "$old_file" 2>/dev/null || stat -c%s "$old_file" 2>/dev/null || echo 0)
             local file_size=$(du -h "${old_file}" | awk '{print $1}')
             rm -f "${old_file}"
             log_info "Deleted old backup: $(basename "${old_file}") (${file_size})"
+            total_freed_bytes=$((total_freed_bytes + file_size_bytes))
             ((deleted_count++))
         fi
     done < <(find "${BACKUP_DIR}" -name "backup-*.sql.gz" -type f -mtime +30)
 
     if [ $deleted_count -gt 0 ]; then
-        log_info "Removed ${deleted_count} old backup file(s)"
+        local total_freed=$((total_freed_bytes / 1024 / 1024))  # Convert to MB
+        log_info "Removed ${deleted_count} old backup file(s) (${total_freed} MB freed)"
     else
         log_info "No old backups to remove"
     fi
@@ -214,6 +257,7 @@ log_info "========== Database Backup Script Started =========="
 log_info "Timestamp: $(date '+%Y-%m-%d %H:%M:%S')"
 
 validate_environment
+parse_database_url
 create_backup_directory
 perform_backup
 cleanup_old_backups

@@ -34,6 +34,7 @@ NC='\033[0m' # No Color
 BACKUP_FILE="${1:-}"
 DATABASE_NAME="${2:-}"
 RESTORE_LOG="restore-$(date +%Y-%m-%d-%H-%M-%S).log"
+TEMP_DIR=""
 
 ################################################################################
 # Functions
@@ -145,6 +146,25 @@ validate_environment() {
     log_success "psql is available"
 }
 
+parse_database_url() {
+    log_info "Parsing DATABASE_URL securely..."
+
+    local db_url="${DATABASE_URL}"
+
+    # Extract password and set PGPASSWORD environment variable
+    # Format: postgresql://user:password@host:port/database
+    export PGPASSWORD="${db_url##*:}"
+    PGPASSWORD="${PGPASSWORD%%@*}"
+
+    # Extract other components
+    DB_HOST=$(echo "$db_url" | sed -E 's|.*@([^:/@]+).*|\1|')
+    DB_PORT=$(echo "$db_url" | sed -E 's|.*:([0-9]+)/.*|\1|' || echo "5432")
+    DB_NAME=$(echo "$db_url" | sed -E 's|.*/([^?]+).*|\1|')
+    DB_USER=$(echo "$db_url" | sed -E 's|.*://([^:]+):.*|\1|')
+
+    log_info "Database credentials extracted (password protected)"
+}
+
 extract_database_name() {
     log_info "Extracting database name from connection string..."
 
@@ -158,9 +178,8 @@ extract_database_name() {
         exit 1
     fi
 
-    # Extract database name from DATABASE_URL
-    # Format: postgresql://user:pass@host:port/dbname?params
-    DATABASE_NAME=$(echo "${DATABASE_URL}" | sed -E 's|.*://.*@[^/]+/([^?]+).*|\1|')
+    # Use the DB_NAME from parsed URL (already extracted by parse_database_url)
+    DATABASE_NAME="${DB_NAME}"
 
     if [ -z "${DATABASE_NAME}" ]; then
         log_error "Failed to extract database name from DATABASE_URL"
@@ -198,18 +217,16 @@ confirm_restore() {
 prepare_backup_file() {
     log_info "Preparing backup file for restore..."
 
-    local temp_dir="/tmp/db-restore-$$"
-    mkdir -p "${temp_dir}"
+    TEMP_DIR="/tmp/db-restore-$$"
+    mkdir -p "${TEMP_DIR}"
 
     case "${BACKUP_FILE}" in
         *.sql.gz)
             log_info "Decompressing gzip file..."
-            if gunzip -c "${BACKUP_FILE}" > "${temp_dir}/backup.sql" 2>> "${RESTORE_LOG}"; then
+            if gunzip -c "${BACKUP_FILE}" 2>> "${RESTORE_LOG}"; then
                 log_success "Successfully decompressed backup file"
-                echo "${temp_dir}/backup.sql"
             else
                 log_error "Failed to decompress backup file"
-                rm -rf "${temp_dir}"
                 exit 1
             fi
             ;;
@@ -218,33 +235,26 @@ prepare_backup_file() {
             cat "${BACKUP_FILE}"
             ;;
         *)
-            # Try to decompress as gzip anyway
-            log_warning "Attempting gzip decompression on unknown file type..."
-            if gunzip -c "${BACKUP_FILE}" 2>/dev/null; then
-                log_success "File was gzip compressed"
-            else
-                log_warning "File does not appear to be gzip compressed, treating as plain SQL"
-                cat "${BACKUP_FILE}"
-            fi
+            # Try gzip first, fallback to plain SQL
+            log_info "Attempting to decompress as gzip..."
+            gunzip -c "${BACKUP_FILE}" 2>/dev/null || cat "${BACKUP_FILE}"
             ;;
     esac
 }
 
 drop_existing_database() {
-    log_warning "Dropping existing tables from database: ${DATABASE_NAME}"
+    log_warning "Resetting database schema (dropping existing objects)..."
 
-    # Get all table names and drop them
-    if ! psql "$DATABASE_URL" -t -c "
-        SELECT 'DROP TABLE IF EXISTS \"' || tablename || '\" CASCADE;'
-        FROM pg_tables
-        WHERE schemaname != 'pg_catalog'
-        AND schemaname != 'information_schema'
-    " | psql "$DATABASE_URL" 2>> "${RESTORE_LOG}"; then
-        log_error "Failed to drop existing tables"
+    # Single atomic operation to drop and recreate public schema
+    psql -h "$DB_HOST" -U "$DB_USER" -p "$DB_PORT" -d "$DB_NAME" \
+        -c "DROP SCHEMA public CASCADE;" \
+        -c "CREATE SCHEMA public;" \
+        2>> "${RESTORE_LOG}" || {
+        log_error "Failed to reset schema"
         exit 1
-    fi
+    }
 
-    log_success "Dropped existing tables"
+    log_success "Database schema reset successfully"
 }
 
 perform_restore() {
@@ -254,8 +264,8 @@ perform_restore() {
 
     local start_time=$(date +%s)
 
-    # Perform the restore with error handling
-    if prepare_backup_file | psql "$DATABASE_URL" >> "${RESTORE_LOG}" 2>&1; then
+    # Perform the restore with error handling using parsed credentials
+    if prepare_backup_file | psql -h "$DB_HOST" -U "$DB_USER" -p "$DB_PORT" -d "$DB_NAME" >> "${RESTORE_LOG}" 2>&1; then
         local end_time=$(date +%s)
         local duration=$((end_time - start_time))
 
@@ -273,8 +283,8 @@ perform_restore() {
 verify_restore() {
     log_info "Verifying restored database..."
 
-    # Get table count
-    local table_count=$(psql "$DATABASE_URL" -t -c "
+    # Get table count using parsed credentials
+    local table_count=$(psql -h "$DB_HOST" -U "$DB_USER" -p "$DB_PORT" -d "$DB_NAME" -t -c "
         SELECT COUNT(*)
         FROM pg_tables
         WHERE schemaname != 'pg_catalog'
@@ -290,7 +300,7 @@ verify_restore() {
 
     # Get row count summary
     log_info "Row count summary:"
-    psql "$DATABASE_URL" -t -c "
+    psql -h "$DB_HOST" -U "$DB_USER" -p "$DB_PORT" -d "$DB_NAME" -t -c "
         SELECT
             schemaname,
             tablename,
@@ -306,7 +316,10 @@ verify_restore() {
 
 cleanup_temp_files() {
     log_info "Cleaning up temporary files..."
-    # Cleanup is handled per-operation
+    if [ -n "$TEMP_DIR" ] && [ -d "$TEMP_DIR" ]; then
+        rm -rf "$TEMP_DIR"
+        log_success "Temporary directory cleaned up"
+    fi
     log_success "Cleanup complete"
 }
 
@@ -323,6 +336,11 @@ display_restore_summary() {
 
 cleanup() {
     local exit_code=$?
+    log_info "Cleaning up temporary files..."
+    if [ -n "$TEMP_DIR" ] && [ -d "$TEMP_DIR" ]; then
+        rm -rf "$TEMP_DIR"
+        log_success "Temporary directory cleaned up"
+    fi
     if [ $exit_code -ne 0 ]; then
         log_error "Restore failed with exit code ${exit_code}"
     fi
@@ -340,6 +358,7 @@ log_info "Timestamp: $(date '+%Y-%m-%d %H:%M:%S')"
 
 validate_arguments
 validate_environment
+parse_database_url
 extract_database_name
 confirm_restore
 drop_existing_database

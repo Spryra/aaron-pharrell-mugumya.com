@@ -154,12 +154,10 @@ jobs:
             apt-get update && apt-get install -y awscli
           fi
 
-          # Upload to S3
-          aws s3 cp backups/ s3://aaron-portfolio-backups/ \
-            --recursive \
-            --sse AES256 \
-            --exclude "*" \
-            --include "backup-*.sql.gz"
+          # Ensure backups directory exists
+          mkdir -p backups
+          aws s3 cp backups/ s3://your-bucket/backups/ --recursive \
+            --sse AES256 --exclude "*" --include "backup-*.sql.gz"
 
       - name: Cleanup old local backups
         run: |
@@ -177,6 +175,12 @@ jobs:
               body: 'Database backup failed! Check workflow logs.'
             })
 ```
+
+**SECURITY WARNING:** GitHub Actions automatically masks secrets in logs. However, ensure:
+- Never commit AWS credentials to the repository
+- Rotate AWS access keys regularly
+- Use least-privilege IAM policy (S3 bucket write access only)
+- Enable CloudTrail logging for backup operations
 
 **GitHub Secrets Setup:**
 
