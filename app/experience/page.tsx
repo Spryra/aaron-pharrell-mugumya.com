@@ -45,7 +45,7 @@ export default function ExperiencePage() {
           setExperienceData(data);
         }
       } catch (error) {
-        console.error('Failed to fetch experience data:', error);
+        // Error handled silently
       } finally {
         setLoading(false);
       }

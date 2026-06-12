@@ -36,7 +36,7 @@ export function ExperienceTimeline({ experiences }: ExperienceTimelineProps) {
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.2 }}
-                  className="w-20 h-20 rounded-3xl overflow-hidden bg-light-surface dark:bg-dark-surface shadow-md hover:shadow-lg transition-shadow"
+                  className="w-20 h-20 rounded-[12px] overflow-hidden bg-light-surface dark:bg-dark-surface shadow-md hover:shadow-lg transition-shadow"
                 >
                   <Image
                     src={exp.logoUrl}
@@ -97,7 +97,7 @@ export function ExperienceTimeline({ experiences }: ExperienceTimelineProps) {
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.2 }}
-                  className="w-16 h-16 rounded-2xl overflow-hidden bg-light-surface dark:bg-dark-surface shadow-md hover:shadow-lg transition-shadow"
+                  className="w-16 h-16 rounded-[12px] overflow-hidden bg-light-surface dark:bg-dark-surface shadow-md hover:shadow-lg transition-shadow"
                 >
                   <Image
                     src={exp.logoUrl}
