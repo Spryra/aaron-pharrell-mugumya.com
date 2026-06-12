@@ -1,1 +1,3 @@
-// Placeholder - to be implemented
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}

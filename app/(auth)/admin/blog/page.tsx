@@ -1,1 +1,3 @@
-// Placeholder - to be implemented
+export default function BlogAdminPage() {
+  return <div>Blog Admin - Coming Soon</div>;
+}

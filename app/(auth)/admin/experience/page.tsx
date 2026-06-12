@@ -1,1 +1,3 @@
-// Placeholder - to be implemented
+export default function ExperiencePage() {
+  return <div>experience Page - Coming Soon</div>;
+}

@@ -7,7 +7,6 @@ import {
   json,
   boolean,
   integer,
-  unique,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 

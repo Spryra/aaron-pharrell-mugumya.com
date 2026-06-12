@@ -1,1 +1,3 @@
-// Placeholder - to be implemented
+export async function POST() {
+  return Response.json({ message: 'Coming soon' });
+}
