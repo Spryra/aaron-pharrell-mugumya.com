@@ -50,7 +50,7 @@ export const experience = pgTable(
       .default(sql`'[]'::json`),
     logoUrl: varchar('logo_url', { length: 500 }).notNull(),
     logoAlt: varchar('logo_alt', { length: 255 }).notNull(),
-    startDate: varchar('start_date', { length: 50 }).notNull(), // Format: "MMM YYYY"
+    startDate: varchar('start_date', { length: 20 }).notNull(), // Format: "MMM YYYY"
     endDate: varchar('end_date', { length: 50 }), // Nullable for current role
     sortOrder: integer('sort_order').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true })
@@ -72,7 +72,7 @@ export const blogPosts = pgTable(
     content: text('content').notNull(), // Markdown content
     coverImageUrl: varchar('cover_image_url', { length: 500 }).notNull(),
     coverImageAlt: varchar('cover_image_alt', { length: 255 }).notNull(),
-    excerpt: text('excerpt').notNull(),
+    excerpt: varchar('excerpt', { length: 500 }).notNull(),
     tags: json('tags').$type<string[]>().notNull().default(sql`'[]'::json`),
     status: varchar('status', { length: 20, enum: ['draft', 'published'] })
       .notNull()
