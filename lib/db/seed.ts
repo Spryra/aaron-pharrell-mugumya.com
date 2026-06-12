@@ -1,12 +1,18 @@
 import { db } from './client';
 import { experience, projects } from './schema';
 
+function validateUrl(url: string | null): void {
+  if (url && !url.startsWith('https://')) {
+    throw new Error(`Invalid URL: ${url} - URLs must start with 'https://'`);
+  }
+}
+
 async function seed() {
   console.log('🌱 Seeding database...');
 
   try {
-    // Seed experience - TraceCorp and ISBAT entries
-    await db.insert(experience).values([
+    // Validate all URLs before inserting
+    const experienceData = [
       {
         company: 'TraceCorp Solutions',
         role: 'AI Specialist (Intern)',
@@ -38,10 +44,9 @@ async function seed() {
         endDate: 'Dec 2025',
         sortOrder: 2,
       },
-    ]);
+    ];
 
-    // Seed projects - EchoTwin, HAIQ, AceGuru
-    await db.insert(projects).values([
+    const projectsData = [
       {
         title: 'EchoTwin',
         slug: 'echotwin',
@@ -81,9 +86,23 @@ async function seed() {
         featured: true,
         sortOrder: 3,
       },
-    ]);
+    ];
 
-    console.log('✓ Database seeded successfully');
+    // Validate URLs
+    experienceData.forEach((exp) => validateUrl(exp.logoUrl));
+    projectsData.forEach((proj) => {
+      validateUrl(proj.imageUrl);
+      validateUrl(proj.githubUrl);
+      validateUrl(proj.liveUrl);
+    });
+
+    // Seed experience - TraceCorp and ISBAT entries
+    await db.insert(experience).values(experienceData);
+
+    // Seed projects - EchoTwin, HAIQ, AceGuru
+    await db.insert(projects).values(projectsData);
+
+    console.log(`✓ Inserted ${experienceData.length} experience entries and ${projectsData.length} projects`);
   } catch (error) {
     console.error('✗ Seed failed:', error);
     process.exit(1);

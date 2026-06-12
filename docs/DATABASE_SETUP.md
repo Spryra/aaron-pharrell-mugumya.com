@@ -88,7 +88,24 @@ The seed script will:
 - Insert TraceCorp Solutions (current role) and ISBAT University (education)
 - Insert 3 featured projects: EchoTwin, HAIQ Bakery Platform, and AceGuru
 
-**Note**: The seed script is idempotent—running it multiple times will insert duplicate records. To clear data, use SQL directly or delete rows before re-seeding.
+### Reset and Re-seed
+
+The seed script is idempotent—running it multiple times will insert duplicate records. To reset the database and re-seed:
+
+```sql
+TRUNCATE TABLE experience RESTART IDENTITY CASCADE;
+TRUNCATE TABLE projects RESTART IDENTITY CASCADE;
+TRUNCATE TABLE contact_messages RESTART IDENTITY CASCADE;
+TRUNCATE TABLE blog_posts RESTART IDENTITY CASCADE;
+```
+
+Then run the seed script again:
+
+```bash
+npm run db:seed
+```
+
+This will clear all data and repopulate with fresh seed entries.
 
 ## Database Schema
 
