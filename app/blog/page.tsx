@@ -1,9 +1,10 @@
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { db } from '@/lib/db/client';
 import { blogPosts as blogPostsTable } from '@/lib/db/schema';
 import { desc, eq } from 'drizzle-orm';
 import BlogHero from '@/components/sections/BlogHero';
-import BlogFeatured from '@/components/sections/BlogFeatured';
+import BlogCard from '@/components/BlogCard';
 import BlogGrid from '@/components/sections/BlogGrid';
 import BlogCTA from '@/components/sections/BlogCTA';
 
@@ -29,8 +30,7 @@ export const metadata = {
 
 export default async function BlogPage() {
   const allPosts = await getBlogPosts();
-  const featuredPosts = allPosts.filter((p) => p.featured);
-  const featuredPost = featuredPosts[0] || null;
+  const featuredPosts = allPosts.filter((p) => p.featured).slice(0, 2);
   const otherPosts = allPosts.filter((p) => !p.featured);
 
   return (
@@ -64,11 +64,33 @@ export default async function BlogPage() {
       {/* Section 1: Blog Hero */}
       <BlogHero />
 
-      {/* Section 2: Featured Post */}
-      {featuredPost && <BlogFeatured post={featuredPost} />}
+      {/* Section 2: Featured Posts */}
+      {featuredPosts.length > 0 && (
+        <section className="py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {featuredPosts.map((post, index) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="relative group"
+                >
+                  <div className="absolute -top-3 -left-3 px-3 py-1 bg-light-accent/10 dark:bg-dark-accent/10 text-light-accent dark:text-dark-accent rounded-full text-xs font-semibold z-10">
+                    Featured
+                  </div>
+                  <BlogCard post={post} />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Section 3: Blog Grid */}
-      <BlogGrid posts={otherPosts} title={featuredPost ? 'Latest Posts' : 'All Posts'} />
+      <BlogGrid posts={otherPosts} title={featuredPosts.length > 0 ? 'Latest Posts' : 'All Posts'} />
 
       {/* Section 4: Call to Action */}
       <BlogCTA />

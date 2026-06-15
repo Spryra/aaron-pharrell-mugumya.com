@@ -100,7 +100,7 @@ export default async function BlogPostPage({
   }
 
   const { previous, next } = await getPreviousAndNextPosts(slug);
-  const relatedPosts = await getRelatedPosts(slug, 2);
+  const relatedPosts = await getRelatedPosts(slug, 3);
 
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors">

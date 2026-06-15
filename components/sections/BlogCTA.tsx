@@ -14,7 +14,7 @@ export default function BlogCTA() {
         viewport={{ once: true }}
       >
         <h2 className="text-3xl sm:text-4xl font-bold font-display text-light-text dark:text-dark-text mb-4">
-          Share your thoughts?
+          Don't miss new posts
         </h2>
         <p className="text-lg text-light-text-secondary dark:text-dark-text-secondary mb-8">
           Interested in discussing AI, development, or tech topics? I&apos;d love to hear from you.

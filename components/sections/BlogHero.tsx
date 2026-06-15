@@ -15,7 +15,7 @@ export default function BlogHero() {
           Blog
         </h1>
         <p className="text-lg sm:text-xl text-light-text-secondary dark:text-dark-text-secondary max-w-3xl mx-auto">
-          Thoughts on AI, full-stack development, and building great software
+          Thoughts on AI, full-stack development, and building at scale
         </p>
       </motion.div>
     </section>
