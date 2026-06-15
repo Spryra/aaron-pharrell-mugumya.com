@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Github, Linkedin, Mail } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import FeaturedProjects from '@/components/sections/FeaturedProjects';
@@ -123,16 +124,16 @@ export default async function Home() {
                 </div>
               </div>
 
-              {/* Right: Hero Image Placeholder */}
-              <div className="relative aspect-square bg-gradient-to-br from-light-accent/10 to-light-accent-secondary/10 dark:from-dark-accent/10 dark:to-dark-accent-secondary/10 rounded-2xl flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-light-text-secondary dark:text-dark-text-secondary">
-                    [Profile Photo]
-                  </p>
-                  <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mt-2">
-                    From Cloudinary
-                  </p>
-                </div>
+              {/* Right: Hero Image */}
+              <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg">
+                <Image
+                  src="/Pharrell.jpeg"
+                  alt="Aaron Pharrell Mugumya"
+                  fill
+                  className="object-cover"
+                  priority={true}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
               </div>
             </div>
           </div>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
+import { initNavLinkAnimation, animateNavLogo, animateNavLinksEntrance } from '@/lib/animations/nav';
 
 function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -57,6 +58,13 @@ export default function Navigation() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Initialize nav link animations on mount
+    initNavLinkAnimation();
+    animateNavLogo('[data-nav-logo]');
+    animateNavLinksEntrance();
+  }, []);
+
+  useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setMobileOpen(false);
@@ -84,6 +92,7 @@ export default function Navigation() {
           href="/"
           className="text-xl font-bold bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent hover:opacity-80 transition"
           prefetch={true}
+          data-nav-logo
         >
           Aaron
         </Link>
@@ -95,6 +104,7 @@ export default function Navigation() {
               key={link.href}
               href={link.href}
               prefetch={true}
+              data-nav-link
               className={`transition font-medium text-sm ${
                 isActive(pathname, link.href)
                   ? 'text-light-accent dark:text-dark-accent underline'

@@ -1,50 +1,37 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Project } from '@/lib/db/schema';
 import ProjectCard from './ProjectCard';
+import { animateProjectCards } from '@/lib/animations/cards';
+import { useAnimateOnScroll } from '@/hooks/useAnimateOnScroll';
 
 interface ProjectsGridProps {
   projects: Project[];
 }
 
 export default function ProjectsGrid({ projects }: ProjectsGridProps) {
+  const gridRef = useAnimateOnScroll<HTMLDivElement>(() => {
+    animateProjectCards('[data-projects-grid]');
+  }, { threshold: 0.2 });
+
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {projects.length > 0 ? (
-          <motion.div
+          <div
+            ref={gridRef}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.1,
-                  delayChildren: 0.1,
-                },
-              },
-            }}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
+            data-projects-grid
           >
             {projects.map((project) => (
-              <motion.div
+              <div
                 key={project.id}
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    transition: { duration: 0.6 },
-                  },
-                }}
+                data-project-card
               >
                 <ProjectCard project={project} />
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         ) : (
           <div className="text-center py-12">
             <p className="text-light-text-secondary dark:text-dark-text-secondary text-lg">
