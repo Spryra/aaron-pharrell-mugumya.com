@@ -1,4 +1,4 @@
-import anime from 'animejs';
+import anime from 'animejs/lib/anime.es.js';
 
 /**
  * Animate section heading with horizontal clip-path reveal

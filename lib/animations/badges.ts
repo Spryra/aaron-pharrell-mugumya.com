@@ -1,4 +1,4 @@
-import anime from 'animejs';
+import anime from 'animejs/lib/anime.es.js';
 
 /**
  * Animate skill badges with pop-in elastic overshoot effect

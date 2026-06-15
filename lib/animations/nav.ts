@@ -1,4 +1,4 @@
-import anime from 'animejs';
+import anime from 'animejs/lib/anime.es.js';
 
 /**
  * Initialize nav link hover animations with underline slide effect

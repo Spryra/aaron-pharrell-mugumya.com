@@ -1,4 +1,4 @@
-import anime from 'animejs';
+import anime from 'animejs/lib/anime.es.js';
 /**
  * Animate hero heading with character-level reveal
  * Each character fades in and translates up in sequence
