@@ -66,16 +66,19 @@ export default function AboutPage() {
             Aaron
           </Link>
           <div className="flex gap-6 items-center">
-            <Link href="/about" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium">
+            <Link href="/about" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
               About
             </Link>
-            <Link href="/projects" className="hover:text-light-accent dark:hover:text-dark-accent transition">
+            <Link href="/experience" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
+              Experience
+            </Link>
+            <Link href="/projects" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
               Projects
             </Link>
-            <Link href="/blog" className="hover:text-light-accent dark:hover:text-dark-accent transition">
+            <Link href="/blog" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
               Blog
             </Link>
-            <Link href="/contact" className="hover:text-light-accent dark:hover:text-dark-accent transition">
+            <Link href="/contact" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
               Contact
             </Link>
             <ThemeToggle />

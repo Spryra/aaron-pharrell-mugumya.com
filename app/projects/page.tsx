@@ -44,6 +44,9 @@ export default async function ProjectsPage() {
             <Link href="/about" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
               About
             </Link>
+            <Link href="/experience" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
+              Experience
+            </Link>
             <Link href="/projects" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
               Projects
             </Link>

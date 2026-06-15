@@ -27,6 +27,12 @@ export default function ContactPage() {
               About
             </Link>
             <Link
+              href="/experience"
+              className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm"
+            >
+              Experience
+            </Link>
+            <Link
               href="/projects"
               className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm"
             >

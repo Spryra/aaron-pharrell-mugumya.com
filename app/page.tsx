@@ -10,20 +10,23 @@ export default function Home() {
       {/* Navigation */}
       <nav className="fixed w-full top-0 z-50 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-light-border dark:border-dark-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="text-xl font-bold bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent">
+          <Link href="/" className="text-xl font-bold bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent hover:opacity-80 transition">
             Aaron
-          </div>
+          </Link>
           <div className="flex gap-6 items-center">
-            <Link href="/about" className="hover:text-light-accent dark:hover:text-dark-accent transition">
+            <Link href="/about" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
               About
             </Link>
-            <Link href="/projects" className="hover:text-light-accent dark:hover:text-dark-accent transition">
+            <Link href="/experience" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
+              Experience
+            </Link>
+            <Link href="/projects" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
               Projects
             </Link>
-            <Link href="/blog" className="hover:text-light-accent dark:hover:text-dark-accent transition">
+            <Link href="/blog" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
               Blog
             </Link>
-            <Link href="/contact" className="hover:text-light-accent dark:hover:text-dark-accent transition">
+            <Link href="/contact" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
               Contact
             </Link>
             <ThemeToggle />
@@ -72,9 +75,12 @@ export default function Home() {
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <button className="px-8 py-3 bg-light-accent dark:bg-dark-accent text-white rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 w-full sm:w-auto">
+                <Link
+                  href="/projects"
+                  className="px-8 py-3 bg-light-accent dark:bg-dark-accent text-white rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 w-full sm:w-auto"
+                >
                   View My Work <ArrowRight size={18} />
-                </button>
+                </Link>
                 <a
                   href="/cv.pdf"
                   className="px-8 py-3 border-2 border-light-accent dark:border-dark-accent text-light-accent dark:text-dark-accent rounded-lg font-semibold hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent dark:hover:text-dark-bg transition w-full sm:w-auto text-center"
@@ -131,10 +137,18 @@ export default function Home() {
       {/* Featured Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-light-surface dark:bg-dark-surface">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold font-display mb-12">Featured Projects</h2>
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-3xl font-bold font-display">Featured Projects</h2>
+            <Link
+              href="/projects"
+              className="text-light-accent dark:text-dark-accent hover:underline font-semibold flex items-center gap-1 text-sm"
+            >
+              View All <ArrowRight size={16} />
+            </Link>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[1, 2].map((i) => (
-              <div key={i} className="bg-white dark:bg-dark-bg rounded-xl overflow-hidden shadow-sm hover:shadow-md transition border border-light-border dark:border-dark-border">
+              <Link key={i} href="/projects" className="bg-white dark:bg-dark-bg rounded-xl overflow-hidden shadow-sm hover:shadow-md transition border border-light-border dark:border-dark-border hover:border-light-accent dark:hover:border-dark-accent">
                 <div className="aspect-video bg-light-accent/10 dark:bg-dark-accent/10" />
                 <div className="p-6 space-y-3">
                   <h3 className="text-xl font-bold font-display">Project {i}</h3>
@@ -150,7 +164,7 @@ export default function Home() {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
