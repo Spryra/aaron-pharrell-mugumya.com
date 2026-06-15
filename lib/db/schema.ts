@@ -94,7 +94,11 @@ export const contactMessages = pgTable('contact_messages', {
   email: varchar('email', { length: 255 }).notNull(),
   subject: varchar('subject', { length: 255 }).notNull(),
   message: text('message').notNull(),
+  ipAddress: varchar('ip_address', { length: 45 }),
   read: boolean('read').notNull().default(false),
+  submittedAt: timestamp('submitted_at', { withTimezone: true })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
