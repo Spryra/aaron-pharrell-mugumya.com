@@ -45,6 +45,7 @@ export default function ContactForm() {
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
+    mode: 'onBlur',
   });
 
   const onSubmit = async (data: ContactFormData) => {
@@ -138,9 +139,10 @@ export default function ContactForm() {
               : 'border-light-border dark:border-dark-border focus:border-light-accent dark:focus:border-dark-accent focus:ring-2 focus:ring-light-accent/20 dark:focus:ring-dark-accent/20'
           )}
           aria-invalid={errors.name ? 'true' : 'false'}
+          aria-describedby={errors.name ? 'name-error' : undefined}
         />
         {errors.name && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+          <p id="name-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
             {errors.name.message}
           </p>
         )}
@@ -169,9 +171,10 @@ export default function ContactForm() {
               : 'border-light-border dark:border-dark-border focus:border-light-accent dark:focus:border-dark-accent focus:ring-2 focus:ring-light-accent/20 dark:focus:ring-dark-accent/20'
           )}
           aria-invalid={errors.email ? 'true' : 'false'}
+          aria-describedby={errors.email ? 'email-error' : undefined}
         />
         {errors.email && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+          <p id="email-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
             {errors.email.message}
           </p>
         )}
@@ -200,9 +203,10 @@ export default function ContactForm() {
               : 'border-light-border dark:border-dark-border focus:border-light-accent dark:focus:border-dark-accent focus:ring-2 focus:ring-light-accent/20 dark:focus:ring-dark-accent/20'
           )}
           aria-invalid={errors.subject ? 'true' : 'false'}
+          aria-describedby={errors.subject ? 'subject-error' : undefined}
         />
         {errors.subject && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+          <p id="subject-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
             {errors.subject.message}
           </p>
         )}
@@ -231,9 +235,10 @@ export default function ContactForm() {
               : 'border-light-border dark:border-dark-border focus:border-light-accent dark:focus:border-dark-accent focus:ring-2 focus:ring-light-accent/20 dark:focus:ring-dark-accent/20'
           )}
           aria-invalid={errors.message ? 'true' : 'false'}
+          aria-describedby={errors.message ? 'message-error' : undefined}
         />
         {errors.message && (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+          <p id="message-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
             {errors.message.message}
           </p>
         )}

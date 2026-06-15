@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Mail, Github, Linkedin, Clock } from 'lucide-react';
 import ContactForm from '@/components/ContactForm';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function ContactPage() {
   return (
@@ -100,7 +101,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Email */}
             <motion.a
-              href="mailto:aaronmugumya04@gmail.com"
+              href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -117,7 +118,7 @@ export default function ContactPage() {
                 Email
               </h3>
               <p className="text-light-text-secondary dark:text-dark-text-secondary mb-4">
-                aaronmugumya04@gmail.com
+                {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
               </p>
               <span className="inline-block px-3 py-1 bg-light-accent/10 dark:bg-dark-accent/10 text-light-accent dark:text-dark-accent text-sm font-medium rounded-full group-hover:bg-light-accent group-hover:text-white dark:group-hover:bg-dark-accent dark:group-hover:text-dark-bg transition-colors duration-300">
                 Send Email
@@ -230,31 +231,5 @@ export default function ContactPage() {
         </div>
       </footer>
     </main>
-  );
-}
-
-function ThemeToggle() {
-  const [isDark, setIsDark] = React.useState(false);
-
-  React.useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    setIsDark(isDarkMode);
-  }, []);
-
-  const toggle = () => {
-    const html = document.documentElement;
-    html.classList.toggle('dark');
-    setIsDark(!isDark);
-    localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-  };
-
-  return (
-    <button
-      onClick={toggle}
-      className="p-2 rounded-lg bg-light-surface dark:bg-dark-surface hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent transition"
-      aria-label="Toggle theme"
-    >
-      {isDark ? '☀️' : '🌙'}
-    </button>
   );
 }

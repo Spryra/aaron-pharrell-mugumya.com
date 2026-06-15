@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import DOMPurify from 'isomorphic-dompurify';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -14,6 +15,13 @@ interface ContactEmailData {
 export async function sendContactNotificationEmail(data: ContactEmailData) {
   const { name, email, subject, message, ipAddress, submittedAt } = data;
 
+  // Sanitize all user inputs to prevent XSS vulnerabilities
+  const cleanName = DOMPurify.sanitize(name);
+  const cleanEmail = DOMPurify.sanitize(email);
+  const cleanSubject = DOMPurify.sanitize(subject);
+  const cleanMessage = DOMPurify.sanitize(message, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+  const cleanIpAddress = ipAddress ? DOMPurify.sanitize(ipAddress) : undefined;
+
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2 style="color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">
@@ -21,21 +29,21 @@ export async function sendContactNotificationEmail(data: ContactEmailData) {
       </h2>
 
       <div style="background-color: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px;">
-        <p style="margin: 8px 0;"><strong>Name:</strong> ${name}</p>
-        <p style="margin: 8px 0;"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-        <p style="margin: 8px 0;"><strong>Subject:</strong> ${subject}</p>
+        <p style="margin: 8px 0;"><strong>Name:</strong> ${cleanName}</p>
+        <p style="margin: 8px 0;"><strong>Email:</strong> <a href="mailto:${cleanEmail}">${cleanEmail}</a></p>
+        <p style="margin: 8px 0;"><strong>Subject:</strong> ${cleanSubject}</p>
         <p style="margin: 8px 0;"><strong>Submitted:</strong> ${submittedAt.toLocaleString()}</p>
-        ${ipAddress ? `<p style="margin: 8px 0; font-size: 12px; color: #666;"><strong>IP Address:</strong> ${ipAddress}</p>` : ''}
+        ${cleanIpAddress ? `<p style="margin: 8px 0; font-size: 12px; color: #666;"><strong>IP Address:</strong> ${cleanIpAddress}</p>` : ''}
       </div>
 
       <div style="background-color: #f9f9f9; padding: 20px; border-left: 4px solid #0066cc; margin: 20px 0;">
         <h3 style="color: #333; margin-top: 0;">Message:</h3>
-        <p style="color: #555; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+        <p style="color: #555; line-height: 1.6; white-space: pre-wrap;">${cleanMessage.replace(/\n/g, '<br />')}</p>
       </div>
 
       <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
         <p style="color: #666; font-size: 14px;">
-          <strong>Quick Reply:</strong> <a href="mailto:${email}?subject=Re: ${encodeURIComponent(subject)}">Reply to ${name}</a>
+          <strong>Quick Reply:</strong> <a href="mailto:${cleanEmail}?subject=Re: ${encodeURIComponent(cleanSubject)}">Reply to ${cleanName}</a>
         </p>
       </div>
 
@@ -47,9 +55,9 @@ export async function sendContactNotificationEmail(data: ContactEmailData) {
 
   try {
     await resend.emails.send({
-      from: 'noreply@resend.dev',
+      from: process.env.RESEND_FROM_EMAIL || 'noreply@resend.dev',
       to: process.env.ADMIN_EMAIL_RECIPIENT!,
-      subject: `New Contact Form Submission from ${name}`,
+      subject: `New Contact Form Submission from ${cleanName}`,
       html: htmlContent,
     });
 
