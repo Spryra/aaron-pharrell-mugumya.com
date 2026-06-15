@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { db } from '@/lib/db/client';
 import { blogPosts as blogPostsTable } from '@/lib/db/schema';
 import { desc, eq } from 'drizzle-orm';
@@ -45,20 +44,16 @@ export default async function BlogPage() {
         <section className="py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {featuredPosts.map((post, index) => (
-                <motion.div
+              {featuredPosts.map((post) => (
+                <div
                   key={post.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
                   className="relative group"
                 >
                   <div className="absolute -top-3 -left-3 px-3 py-1 bg-light-accent/10 dark:bg-dark-accent/10 text-light-accent dark:text-dark-accent rounded-full text-xs font-semibold z-10">
                     Featured
                   </div>
                   <BlogCard post={post} />
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>

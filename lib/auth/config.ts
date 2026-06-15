@@ -1,19 +1,12 @@
 import CredentialsProvider from 'next-auth/providers/credentials'
-import type { NextAuthConfig } from 'next-auth'
+import type { NextAuthOptions } from 'next-auth'
 
 const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com'
 const adminPassword = process.env.ADMIN_PASSWORD || 'default-password'
 
-export const authConfig: NextAuthConfig = {
+export const authConfig: NextAuthOptions = {
   pages: {
     signIn: '/admin/login',
-  },
-  callbacks: {
-    authorized({ auth, request }) {
-      const isAdminPath = request.nextUrl.pathname.startsWith('/admin')
-      const isLoggedIn = !!auth?.user
-      return isAdminPath ? isLoggedIn : true
-    },
   },
   providers: [
     CredentialsProvider({
