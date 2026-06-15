@@ -1,114 +1,143 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Github, Linkedin, Mail } from 'lucide-react';
 import Navigation from '@/components/Navigation';
+import FeaturedProjects from '@/components/sections/FeaturedProjects';
+import ClientHomeWrapper from '@/components/ClientHomeWrapper';
+import { db } from '@/lib/db/client';
+import { projects as projectsTable } from '@/lib/db/schema';
+import { eq, desc } from 'drizzle-orm';
 
-export default function Home() {
+export const revalidate = 3600; // Cache for 1 hour
+
+// Fetch featured projects from database
+async function getFeaturedProjects() {
+  try {
+    const featured = await db
+      .select()
+      .from(projectsTable)
+      .where(eq(projectsTable.featured, true))
+      .orderBy(desc(projectsTable.sortOrder))
+      .limit(2);
+    return featured;
+  } catch (error) {
+    console.error('Failed to fetch featured projects:', error);
+    return [];
+  }
+}
+
+export const metadata = {
+  title: 'Aaron Pharrell Mugumya | AI Engineer & Full-Stack Developer',
+  description: 'AI Engineer and Full-Stack Developer building intelligent automation systems for East Africa. Founder of JuniorReactive.',
+};
+
+export default async function Home() {
+  const featuredProjects = await getFeaturedProjects();
+
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg text-dark-bg dark:text-dark-text transition-colors">
       <Navigation />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            {/* Left: Text */}
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h1 className="text-5xl sm:text-6xl font-bold font-display leading-tight">
-                  AI Engineer &<br />
-                  <span className="bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent">
-                    Full-Stack Builder
-                  </span>
-                </h1>
-                <p className="text-lg text-light-text-secondary dark:text-dark-text-secondary max-w-lg">
-                  Founder of{' '}
+      {/* Hero Section - Wrapped in client component for animations */}
+      <ClientHomeWrapper>
+        <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              {/* Left: Text */}
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <h1 className="text-5xl sm:text-6xl font-bold font-display leading-tight" data-hero-heading>
+                    AI Engineer &<br />
+                    <span className="bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent">
+                      Full-Stack Builder
+                    </span>
+                  </h1>
+                  <p className="text-lg text-light-text-secondary dark:text-dark-text-secondary max-w-lg">
+                    Founder of{' '}
+                    <a
+                      href="https://jrcom.vercel.app/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-light-accent dark:text-dark-accent hover:underline font-semibold"
+                    >
+                      JuniorReactive
+                    </a>
+                    . Building intelligent automation and production AI systems for East Africa.
+                  </p>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 py-4 border-y border-light-border dark:border-dark-border" data-stats-container>
+                  <div>
+                    <div className="text-2xl font-bold text-light-accent dark:text-dark-accent" data-counter-cgpa>0.00</div>
+                    <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">ISBAT CGPA</p>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-light-accent dark:text-dark-accent" data-counter-projects>0</div>
+                    <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Live Projects</p>
+                  </div>
+                </div>
+
+                {/* CTA Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                  <Link
+                    href="/projects"
+                    className="px-8 py-3 bg-light-accent dark:bg-dark-accent text-white rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 w-full sm:w-auto"
+                  >
+                    View My Work <ArrowRight size={18} />
+                  </Link>
                   <a
-                    href="https://jrcom.vercel.app/"
+                    href="/cv.pdf"
+                    className="px-8 py-3 border-2 border-light-accent dark:border-dark-accent text-light-accent dark:text-dark-accent rounded-lg font-semibold hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent dark:hover:text-dark-bg transition w-full sm:w-auto text-center"
+                  >
+                    Download CV
+                  </a>
+                </div>
+
+                {/* Social Links */}
+                <div className="flex gap-4 pt-4">
+                  <a
+                    href="https://github.com/Spryra"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-light-accent dark:text-dark-accent hover:underline font-semibold"
+                    className="p-3 bg-light-surface dark:bg-dark-surface rounded-lg hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent transition"
+                    aria-label="GitHub"
                   >
-                    JuniorReactive
+                    <Github size={20} />
                   </a>
-                  . Building intelligent automation and production AI systems for East Africa.
-                </p>
-              </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-4 py-4 border-y border-light-border dark:border-dark-border">
-                <div>
-                  <div className="text-2xl font-bold text-light-accent dark:text-dark-accent">4.38</div>
-                  <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">ISBAT CGPA</p>
+                  <a
+                    href="https://www.linkedin.com/in/aaron-mugumya-pharrell"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 bg-light-surface dark:bg-dark-surface rounded-lg hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent transition"
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin size={20} />
+                  </a>
+                  <a
+                    href="mailto:aaronmugumya04@gmail.com"
+                    className="p-3 bg-light-surface dark:bg-dark-surface rounded-lg hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent transition"
+                    aria-label="Email"
+                  >
+                    <Mail size={20} />
+                  </a>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-light-accent dark:text-dark-accent">2+</div>
-                  <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Live Projects</p>
+              </div>
+
+              {/* Right: Hero Image Placeholder */}
+              <div className="relative aspect-square bg-gradient-to-br from-light-accent/10 to-light-accent-secondary/10 dark:from-dark-accent/10 dark:to-dark-accent-secondary/10 rounded-2xl flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-light-text-secondary dark:text-dark-text-secondary">
+                    [Profile Photo]
+                  </p>
+                  <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mt-2">
+                    From Cloudinary
+                  </p>
                 </div>
-              </div>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link
-                  href="/projects"
-                  className="px-8 py-3 bg-light-accent dark:bg-dark-accent text-white rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 w-full sm:w-auto"
-                >
-                  View My Work <ArrowRight size={18} />
-                </Link>
-                <a
-                  href="/cv.pdf"
-                  className="px-8 py-3 border-2 border-light-accent dark:border-dark-accent text-light-accent dark:text-dark-accent rounded-lg font-semibold hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent dark:hover:text-dark-bg transition w-full sm:w-auto text-center"
-                >
-                  Download CV
-                </a>
-              </div>
-
-              {/* Social Links */}
-              <div className="flex gap-4 pt-4">
-                <a
-                  href="https://github.com/Spryra"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-light-surface dark:bg-dark-surface rounded-lg hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent transition"
-                  aria-label="GitHub"
-                >
-                  <Github size={20} />
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/aaron-mugumya-pharrell"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-light-surface dark:bg-dark-surface rounded-lg hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent transition"
-                  aria-label="LinkedIn"
-                >
-                  <Linkedin size={20} />
-                </a>
-                <a
-                  href="mailto:aaronmugumya04@gmail.com"
-                  className="p-3 bg-light-surface dark:bg-dark-surface rounded-lg hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent transition"
-                  aria-label="Email"
-                >
-                  <Mail size={20} />
-                </a>
-              </div>
-            </div>
-
-            {/* Right: Hero Image Placeholder */}
-            <div className="relative aspect-square bg-gradient-to-br from-light-accent/10 to-light-accent-secondary/10 dark:from-dark-accent/10 dark:to-dark-accent-secondary/10 rounded-2xl flex items-center justify-center">
-              <div className="text-center">
-                <p className="text-light-text-secondary dark:text-dark-text-secondary">
-                  [Profile Photo]
-                </p>
-                <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mt-2">
-                  From Cloudinary
-                </p>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </ClientHomeWrapper>
 
       {/* Featured Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-light-surface dark:bg-dark-surface">
@@ -122,27 +151,8 @@ export default function Home() {
               View All <ArrowRight size={16} />
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[1, 2].map((i) => (
-              <Link key={i} href="/projects" className="bg-white dark:bg-dark-bg rounded-xl overflow-hidden shadow-sm hover:shadow-md transition border border-light-border dark:border-dark-border hover:border-light-accent dark:hover:border-dark-accent">
-                <div className="aspect-video bg-light-accent/10 dark:bg-dark-accent/10" />
-                <div className="p-6 space-y-3">
-                  <h3 className="text-xl font-bold font-display">Project {i}</h3>
-                  <p className="text-light-text-secondary dark:text-dark-text-secondary text-sm">
-                    Coming soon - Full project showcase with case studies
-                  </p>
-                  <div className="flex gap-2 flex-wrap pt-2">
-                    <span className="text-xs px-2 py-1 bg-light-accent/10 dark:bg-dark-accent/10 text-light-accent dark:text-dark-accent rounded">
-                      React
-                    </span>
-                    <span className="text-xs px-2 py-1 bg-light-accent/10 dark:bg-dark-accent/10 text-light-accent dark:text-dark-accent rounded">
-                      AI/ML
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {/* Featured projects component with live database data */}
+          <FeaturedProjects projects={featuredProjects} />
         </div>
       </section>
 
