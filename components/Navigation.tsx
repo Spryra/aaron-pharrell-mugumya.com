@@ -69,6 +69,7 @@ export default function Navigation() {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
+    return undefined;
   }, [mobileOpen]);
 
   const handleLinkClick = () => {
@@ -82,6 +83,7 @@ export default function Navigation() {
         <Link
           href="/"
           className="text-xl font-bold bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent hover:opacity-80 transition"
+          prefetch={true}
         >
           Aaron
         </Link>
@@ -92,6 +94,7 @@ export default function Navigation() {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={true}
               className={`transition font-medium text-sm ${
                 isActive(pathname, link.href)
                   ? 'text-light-accent dark:text-dark-accent underline'
@@ -127,6 +130,7 @@ export default function Navigation() {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={true}
               onClick={handleLinkClick}
               className={`block px-3 py-2 rounded-lg transition font-medium ${
                 isActive(pathname, link.href)

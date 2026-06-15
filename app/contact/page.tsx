@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Mail, Github, Linkedin, Clock } from 'lucide-react';
 import Navigation from '@/components/Navigation';

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { db } from '@/lib/db/client';
 import { projects as projectsTable } from '@/lib/db/schema';
 import { desc } from 'drizzle-orm';
@@ -6,6 +5,9 @@ import Navigation from '@/components/Navigation';
 import ProjectsHero from '@/components/sections/ProjectsHero';
 import ProjectsCTA from '@/components/sections/ProjectsCTA';
 import ProjectsGrid from '@/components/ProjectsGrid';
+
+// Cache for 1 hour
+export const revalidate = 3600;
 
 async function getProjects() {
   try {

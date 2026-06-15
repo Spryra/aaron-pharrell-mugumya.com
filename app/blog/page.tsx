@@ -7,6 +7,9 @@ import BlogCard from '@/components/BlogCard';
 import BlogGrid from '@/components/sections/BlogGrid';
 import BlogCTA from '@/components/sections/BlogCTA';
 
+// Cache for 1 hour
+export const revalidate = 3600;
+
 async function getBlogPosts() {
   try {
     const posts = await db

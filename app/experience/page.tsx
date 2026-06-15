@@ -1,98 +1,75 @@
-'use client'
+import React from 'react';
+import Link from 'next/link';
+import { desc } from 'drizzle-orm';
+import { db } from '@/lib/db/client';
+import { experience } from '@/lib/db/schema';
+import Navigation from '@/components/Navigation';
+import { ExperienceTimeline } from '@/components/ExperienceTimeline';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { AnimatedSection } from '@/components/AnimatedSection';
+import type { Experience } from '@/lib/db/schema';
 
-import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-import Navigation from '@/components/Navigation'
-import { ExperienceTimeline } from '@/components/ExperienceTimeline'
-import { ErrorBoundary } from '@/components/ErrorBoundary'
-import type { Experience } from '@/lib/db/schema'
+// Cache for 1 hour
+export const revalidate = 3600;
 
-export default function ExperiencePage() {
-  const [experiences, setExperiences] = useState<Experience[]>([])
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchExperiences = async () => {
-      try {
-        const response = await fetch('/api/experience')
-        if (!response.ok) throw new Error('Failed to fetch')
-        const data = await response.json()
-        setExperiences(data)
-      } catch (err) {
-        setError('Failed to load experiences. Please refresh the page.')
-        console.error('Experience fetch error:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchExperiences()
-  }, [])
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-white dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors flex items-center justify-center">
-        <p>Loading...</p>
-      </main>
-    )
+async function getExperiences(): Promise<Experience[]> {
+  try {
+    const experiences = await db
+      .select()
+      .from(experience)
+      .orderBy(desc(experience.endDate));
+    return experiences;
+  } catch (error) {
+    console.error('Failed to fetch experiences:', error);
+    return [];
   }
+}
+
+export const metadata = {
+  title: 'Experience | Aaron Pharrell Mugumya',
+  description:
+    'My professional journey and academic background in AI/ML and full-stack development.',
+};
+
+export default async function ExperiencePage() {
+  const experiences = await getExperiences();
+
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors">
       <Navigation />
 
       {/* Section 1: Experience Hero */}
       <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8">
-        <motion.div
-          className="max-w-4xl mx-auto text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
+        <AnimatedSection className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl sm:text-6xl font-bold font-display mb-6">
             Experience &<span className="bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent"> Education</span>
           </h1>
           <p className="text-lg sm:text-xl text-light-text-secondary dark:text-dark-text-secondary max-w-3xl mx-auto leading-relaxed">
             A timeline of my professional journey and academic growth
           </p>
-        </motion.div>
+        </AnimatedSection>
       </section>
 
       {/* Section 2: Experience Timeline */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          {error ? (
-            <div className="bg-red-50 dark:bg-red-950 p-4 rounded text-red-800 dark:text-red-200">
-              {error}
-            </div>
-          ) : experiences.length > 0 ? (
+          {experiences.length > 0 ? (
             <ErrorBoundary fallback="Failed to load experience timeline">
               <ExperienceTimeline experiences={experiences} />
             </ErrorBoundary>
           ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-12"
-            >
+            <div className="text-center py-12">
               <p className="text-light-text-secondary dark:text-dark-text-secondary">
                 Experience data is being prepared. Check back soon!
               </p>
-            </motion.div>
+            </div>
           )}
         </div>
       </section>
 
       {/* Section 3: Call to Action */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-light-surface dark:bg-dark-surface">
-        <motion.div
-          className="max-w-4xl mx-auto text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-        >
+        <AnimatedSection className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold font-display mb-6">
             Open to <span className="bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent">Opportunities</span>
           </h2>
@@ -106,7 +83,7 @@ export default function ExperiencePage() {
           >
             Get in Touch
           </Link>
-        </motion.div>
+        </AnimatedSection>
       </section>
 
       {/* Footer */}
@@ -127,5 +104,5 @@ export default function ExperiencePage() {
         </div>
       </footer>
     </main>
-  )
+  );
 }
