@@ -3,36 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Github, Linkedin, Mail } from 'lucide-react';
+import Navigation from '@/components/Navigation';
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg text-dark-bg dark:text-dark-text transition-colors">
-      {/* Navigation */}
-      <nav className="fixed w-full top-0 z-50 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-light-border dark:border-dark-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent hover:opacity-80 transition">
-            Aaron
-          </Link>
-          <div className="flex gap-6 items-center">
-            <Link href="/about" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
-              About
-            </Link>
-            <Link href="/experience" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
-              Experience
-            </Link>
-            <Link href="/projects" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
-              Projects
-            </Link>
-            <Link href="/blog" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
-              Blog
-            </Link>
-            <Link href="/contact" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
-              Contact
-            </Link>
-            <ThemeToggle />
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
@@ -188,30 +164,5 @@ export default function Home() {
         </div>
       </footer>
     </main>
-  );
-}
-
-function ThemeToggle() {
-  const [isDark, setIsDark] = React.useState(false);
-
-  React.useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    setIsDark(isDarkMode);
-  }, []);
-
-  const toggle = () => {
-    const html = document.documentElement;
-    html.classList.toggle('dark');
-    setIsDark(!isDark);
-    localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-  };
-
-  return (
-    <button
-      onClick={toggle}
-      className="p-2 rounded-lg bg-light-surface dark:bg-dark-surface hover:bg-light-accent hover:text-white dark:hover:bg-dark-accent transition"
-    >
-      {isDark ? '☀️' : '🌙'}
-    </button>
   );
 }

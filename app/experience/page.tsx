@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import Navigation from '@/components/Navigation'
 import { ExperienceTimeline } from '@/components/ExperienceTimeline'
-import { ThemeToggle } from '@/components/ThemeToggle'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import type { Experience } from '@/lib/db/schema'
 
@@ -39,32 +39,7 @@ export default function ExperiencePage() {
   }
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors">
-      {/* Navigation */}
-      <nav className="fixed w-full top-0 z-50 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-light-border dark:border-dark-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent hover:opacity-80 transition">
-            Aaron
-          </Link>
-          <div className="flex gap-6 items-center">
-            <Link href="/about" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium">
-              About
-            </Link>
-            <Link href="/experience" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium">
-              Experience
-            </Link>
-            <Link href="/projects" className="hover:text-light-accent dark:hover:text-dark-accent transition">
-              Projects
-            </Link>
-            <Link href="/blog" className="hover:text-light-accent dark:hover:text-dark-accent transition">
-              Blog
-            </Link>
-            <Link href="/contact" className="hover:text-light-accent dark:hover:text-dark-accent transition">
-              Contact
-            </Link>
-            <ThemeToggle />
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Section 1: Experience Hero */}
       <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8">
