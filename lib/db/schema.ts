@@ -73,6 +73,7 @@ export const blogPosts = pgTable(
     coverImageAlt: varchar('cover_image_alt', { length: 255 }).notNull(),
     excerpt: varchar('excerpt', { length: 500 }).notNull(),
     tags: json('tags').$type<string[]>().notNull().default(sql`'[]'::json`),
+    featured: boolean('featured').notNull().default(false),
     status: varchar('status', { length: 20, enum: ['draft', 'published'] })
       .notNull()
       .default('draft'),
