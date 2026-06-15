@@ -7,6 +7,8 @@ interface BlogPostFooterProps {
   slug: string;
 }
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aaronpharrell.com';
+
 export default function BlogPostFooter({ post, slug }: BlogPostFooterProps) {
   return (
     <section className="py-12 px-4 sm:px-6 lg:px-8 border-t border-light-border dark:border-dark-border">
@@ -30,7 +32,7 @@ export default function BlogPostFooter({ post, slug }: BlogPostFooterProps) {
           <div className="flex items-center gap-3">
             <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Share:</span>
             <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`${process.env.SITE_URL || 'https://aaronpharrell.dev'}/blog/${slug}`)}`}
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`${siteUrl}/blog/${slug}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-light-accent dark:text-dark-accent hover:opacity-70 transition"
@@ -39,7 +41,7 @@ export default function BlogPostFooter({ post, slug }: BlogPostFooterProps) {
               𝕏
             </a>
             <a
-              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`${process.env.SITE_URL || 'https://aaronpharrell.dev'}/blog/${slug}`)}`}
+              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`${siteUrl}/blog/${slug}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-light-accent dark:text-dark-accent hover:opacity-70 transition"

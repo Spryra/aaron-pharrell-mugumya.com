@@ -1,14 +1,19 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { BlogPost } from '@/lib/db/schema';
+import { formatDate } from '@/lib/utils/date';
+import { calculateReadTime } from '@/lib/utils/readTime';
 
 interface BlogFeaturedProps {
   post: BlogPost;
 }
 
 export default function BlogFeatured({ post }: BlogFeaturedProps) {
+  const readTime = calculateReadTime(post.content);
+
   return (
     <section className="py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
@@ -23,11 +28,13 @@ export default function BlogFeatured({ post }: BlogFeaturedProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 md:p-10 cursor-pointer group">
               {/* Featured Image */}
               <div className="relative aspect-video md:aspect-square rounded-lg overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={post.coverImageUrl}
                   alt={post.coverImageAlt}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority={true}
                 />
               </div>
 
@@ -46,18 +53,10 @@ export default function BlogFeatured({ post }: BlogFeaturedProps) {
                 </p>
                 <div className="flex items-center gap-3 text-sm text-light-text-secondary dark:text-dark-text-secondary">
                   <time dateTime={post.publishedAt?.toISOString()}>
-                    {post.publishedAt
-                      ? new Intl.DateTimeFormat('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        }).format(new Date(post.publishedAt))
-                      : 'Not published'}
+                    {post.publishedAt ? formatDate(post.publishedAt) : 'Not published'}
                   </time>
                   <span>·</span>
-                  <span>
-                    {Math.ceil(post.content.trim().split(/\s+/).length / 200)} min read
-                  </span>
+                  <span>{readTime} min read</span>
                 </div>
               </div>
             </div>

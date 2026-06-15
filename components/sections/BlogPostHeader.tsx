@@ -1,8 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { BlogPost } from '@/lib/db/schema';
-import { formatDate } from '@/lib/utils/date';
+import { formatDate, formatDateShort } from '@/lib/utils/date';
 import { calculateReadTime } from '@/lib/utils/readTime';
 
 interface BlogPostHeaderProps {
@@ -17,11 +18,13 @@ export default function BlogPostHeader({ post }: BlogPostHeaderProps) {
       <div className="max-w-4xl mx-auto">
         {/* Cover Image */}
         <div className="relative w-full aspect-video rounded-lg overflow-hidden mb-8 bg-light-surface dark:bg-dark-surface">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={post.coverImageUrl}
             alt={post.coverImageAlt}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 70vw"
+            priority={true}
           />
         </div>
 
@@ -63,14 +66,7 @@ export default function BlogPostHeader({ post }: BlogPostHeaderProps) {
             {post.updatedAt && post.updatedAt.getTime() !== post.publishedAt?.getTime() && (
               <>
                 <span>·</span>
-                <span className="text-xs">
-                  Updated{' '}
-                  {new Intl.DateTimeFormat('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  }).format(new Date(post.updatedAt))}
-                </span>
+                <span className="text-xs">Updated {formatDateShort(post.updatedAt)}</span>
               </>
             )}
           </div>

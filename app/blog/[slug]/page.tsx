@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/db/client';
 import { blogPosts as blogPostsTable } from '@/lib/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
+import Navigation from '@/components/Navigation';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import BlogPostHeader from '@/components/sections/BlogPostHeader';
 import BlogPostFooter from '@/components/sections/BlogPostFooter';
@@ -104,31 +105,7 @@ export default async function BlogPostPage({
 
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors">
-      {/* Navigation */}
-      <nav className="fixed w-full top-0 z-50 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-light-border dark:border-dark-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <Link
-            href="/"
-            className="text-xl font-bold bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent hover:opacity-80 transition"
-          >
-            Aaron
-          </Link>
-          <div className="flex gap-6 items-center">
-            <Link href="/about" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
-              About
-            </Link>
-            <Link href="/projects" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
-              Projects
-            </Link>
-            <Link href="/blog" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
-              Blog
-            </Link>
-            <Link href="/contact" className="hover:text-light-accent dark:hover:text-dark-accent transition font-medium text-sm">
-              Contact
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="pt-28 pb-8 px-4 sm:px-6 lg:px-8">
