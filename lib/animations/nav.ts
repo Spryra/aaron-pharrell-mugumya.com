@@ -1,9 +1,20 @@
-import anime from 'animejs/lib/anime.es.js';
+let anime: any;
+
+// Load anime.js dynamically on client side
+if (typeof window !== 'undefined') {
+  import('animejs').then(module => {
+    anime = module.default || module;
+  }).catch(() => {
+    console.warn('Failed to load animejs');
+  });
+}
 
 /**
  * Initialize nav link hover animations with underline slide effect
  */
 export function initNavLinkAnimation(): void {
+  if (!anime) return; // Skip if anime.js not loaded
+
   const navLinks = document.querySelectorAll('[data-nav-link]');
 
   navLinks.forEach((link) => {
@@ -26,7 +37,7 @@ export function initNavLinkAnimation(): void {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     (link as HTMLElement).addEventListener('mouseenter', () => {
-      if (!prefersReducedMotion) {
+      if (!prefersReducedMotion && anime) {
         anime.set(underline, {
           width: '100%',
           duration: 300,
@@ -38,7 +49,7 @@ export function initNavLinkAnimation(): void {
     });
 
     (link as HTMLElement).addEventListener('mouseleave', () => {
-      if (!prefersReducedMotion) {
+      if (!prefersReducedMotion && anime) {
         anime.set(underline, {
           width: '0%',
           duration: 300,

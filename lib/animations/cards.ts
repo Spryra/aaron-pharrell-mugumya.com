@@ -1,10 +1,21 @@
-import anime from 'animejs/lib/anime.es.js';
+let anime: any;
+
+// Load anime.js dynamically
+if (typeof window !== 'undefined') {
+  import('animejs').then(module => {
+    anime = module.default || module;
+  }).catch(() => {
+    console.warn('Failed to load animejs');
+  });
+}
 
 /**
  * Animate cards with staggered cascade effect
  * Cards slide in with slight left/right offset and fade in
  */
 export function animateCardsCascade(containerSelector: string): void {
+  if (!anime) return; // Skip if anime not loaded
+
   const container = document.querySelector(containerSelector);
   if (!container) return;
 

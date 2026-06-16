@@ -1,9 +1,20 @@
-import anime from 'animejs/lib/anime.es.js';
+let anime: any;
+
+// Load anime.js dynamically
+if (typeof window !== 'undefined') {
+  import('animejs').then(module => {
+    anime = module.default || module;
+  }).catch(() => {
+    console.warn('Failed to load animejs');
+  });
+}
 
 /**
  * Animate skill badges with pop-in elastic overshoot effect
  */
 export function animateBadges(containerSelector: string): void {
+  if (!anime) return; // Skip if anime not loaded
+
   const container = document.querySelector(containerSelector);
   if (!container) return;
 

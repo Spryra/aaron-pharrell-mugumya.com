@@ -1,10 +1,21 @@
-import anime from 'animejs/lib/anime.es.js';
+let anime: any;
+
+// Load anime.js dynamically
+if (typeof window !== 'undefined') {
+  import('animejs').then(module => {
+    anime = module.default || module;
+  }).catch(() => {
+    console.warn('Failed to load animejs');
+  });
+}
 
 /**
  * Animate section heading with horizontal clip-path reveal
  * Creates a professional "text sliding in" effect
  */
 export function animateSectionHeading(elementSelector: string): void {
+  if (!anime) return; // Skip if anime not loaded
+
   const element = document.querySelector(elementSelector);
   if (!element) return;
 

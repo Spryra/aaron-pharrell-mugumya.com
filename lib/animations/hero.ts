@@ -1,9 +1,21 @@
-import anime from 'animejs/lib/anime.es.js';
+let anime: any;
+
+// Load anime.js dynamically
+if (typeof window !== 'undefined') {
+  import('animejs').then(module => {
+    anime = module.default || module;
+  }).catch(() => {
+    console.warn('Failed to load animejs');
+  });
+}
+
 /**
  * Animate hero heading with character-level reveal
  * Each character fades in and translates up in sequence
  */
 export function animateHeroHeading(elementSelector: string): void {
+  if (!anime) return; // Skip if anime not loaded
+
   const element = document.querySelector(elementSelector);
   if (!element) return;
 
