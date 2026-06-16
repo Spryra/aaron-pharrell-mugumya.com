@@ -12,7 +12,9 @@ interface FeaturedProjectsProps {
 
 export default function FeaturedProjects({ projects }: FeaturedProjectsProps) {
   useEffect(() => {
-    animateCardsCascade('[data-featured-projects]');
+    animateCardsCascade('[data-featured-projects]').catch(() => {
+      // Silently fail if animation fails to load
+    });
   }, []);
 
   if (projects.length === 0) {

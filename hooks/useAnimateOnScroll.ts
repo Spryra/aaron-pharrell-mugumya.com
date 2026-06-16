@@ -12,7 +12,7 @@ interface UseAnimateOnScrollOptions {
  * Custom hook to trigger animations when element enters viewport
  * Respects prefers-reduced-motion media query
  *
- * @param callback - Function to call when element enters viewport
+ * @param callback - Function to call when element enters viewport (can be async)
  * @param options - IntersectionObserver options
  * @returns Ref to attach to the element
  *
@@ -24,7 +24,7 @@ interface UseAnimateOnScrollOptions {
  * return <div ref={ref} data-heading>My Heading</div>;
  */
 export function useAnimateOnScroll<T extends HTMLElement>(
-  callback: () => void,
+  callback: () => void | Promise<void>,
   options: UseAnimateOnScrollOptions = {}
 ): RefObject<T> {
   const ref = useRef<T>(null);
@@ -44,7 +44,12 @@ export function useAnimateOnScroll<T extends HTMLElement>(
           ).matches;
 
           if (!prefersReducedMotion) {
-            callback();
+            const result = callback();
+            if (result instanceof Promise) {
+              result.catch(() => {
+                // Silently fail if animation fails to load
+              });
+            }
             hasAnimated.current = true;
           }
 
@@ -74,12 +79,12 @@ export function useAnimateOnScroll<T extends HTMLElement>(
  * Useful when you have direct control over the element
  *
  * @param selector - CSS selector for the element
- * @param callback - Function to call when element becomes visible
+ * @param callback - Function to call when element becomes visible (can be async)
  * @param options - IntersectionObserver options
  */
 export function useAnimateElementOnScroll(
   selector: string,
-  callback: () => void,
+  callback: () => void | Promise<void>,
   options: UseAnimateOnScrollOptions = {}
 ): void {
   const { threshold = 0.3, rootMargin = '0px', once = true } = options;
@@ -98,7 +103,12 @@ export function useAnimateElementOnScroll(
           ).matches;
 
           if (!prefersReducedMotion) {
-            callback();
+            const result = callback();
+            if (result instanceof Promise) {
+              result.catch(() => {
+                // Silently fail if animation fails to load
+              });
+            }
             hasAnimated.current = true;
           }
 

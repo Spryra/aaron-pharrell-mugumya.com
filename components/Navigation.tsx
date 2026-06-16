@@ -59,9 +59,15 @@ export default function Navigation() {
 
   useEffect(() => {
     // Initialize nav link animations on mount
-    initNavLinkAnimation();
-    animateNavLogo('[data-nav-logo]');
-    animateNavLinksEntrance();
+    initNavLinkAnimation().catch(() => {
+      // Silently fail if animation fails to load
+    });
+    animateNavLogo('[data-nav-logo]').catch(() => {
+      // Silently fail if animation fails to load
+    });
+    animateNavLinksEntrance().catch(() => {
+      // Silently fail if animation fails to load
+    });
   }, []);
 
   useEffect(() => {

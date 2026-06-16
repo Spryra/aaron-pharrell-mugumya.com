@@ -1,20 +1,23 @@
 let anime: any;
 
-// Load anime.js dynamically
-if (typeof window !== 'undefined') {
-  import('animejs').then((module: any) => {
-    anime = module.default || module;
-  }).catch(() => {
-    console.warn('Failed to load animejs');
-  });
-}
+// Load anime.js dynamically with a small delay to ensure it's available
+const animePromise = typeof window !== 'undefined'
+  ? import('animejs').then((module: any) => {
+      anime = module.default || module;
+      return anime;
+    }).catch(() => {
+      console.warn('Failed to load animejs');
+      return null;
+    })
+  : Promise.resolve(null);
 
 /**
  * Animate cards with staggered cascade effect
  * Cards slide in with slight left/right offset and fade in
  */
-export function animateCardsCascade(containerSelector: string): void {
-  if (!anime) return; // Skip if anime not loaded
+export async function animateCardsCascade(containerSelector: string): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
 
   const container = document.querySelector(containerSelector);
   if (!container) return;
@@ -31,7 +34,7 @@ export function animateCardsCascade(containerSelector: string): void {
 
   const cards = container.querySelectorAll('[data-animate-card]');
 
-  anime({
+  animeLib({
     targets: cards,
     opacity: [0, 1],
     translateY: [40, 0],
@@ -39,7 +42,7 @@ export function animateCardsCascade(containerSelector: string): void {
       return i % 2 === 0 ? [20, 0] : [-20, 0];
     }) as any,
     duration: 800,
-    delay: anime.stagger(100),
+    delay: animeLib.stagger(100),
     easing: 'easeOutQuad',
   });
 }
@@ -47,7 +50,10 @@ export function animateCardsCascade(containerSelector: string): void {
 /**
  * Animate blog cards with fade and slide effect
  */
-export function animateBlogCards(containerSelector: string): void {
+export async function animateBlogCards(containerSelector: string): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
+
   const container = document.querySelector(containerSelector);
   if (!container) return;
 
@@ -63,12 +69,12 @@ export function animateBlogCards(containerSelector: string): void {
 
   const cards = container.querySelectorAll('[data-blog-card]');
 
-  anime({
+  animeLib({
     targets: cards,
     opacity: [0, 1],
     translateY: [30, 0],
     duration: 700,
-    delay: anime.stagger(80),
+    delay: animeLib.stagger(80),
     easing: 'easeOutQuad',
   });
 }
@@ -76,7 +82,10 @@ export function animateBlogCards(containerSelector: string): void {
 /**
  * Animate project cards with more prominent cascade
  */
-export function animateProjectCards(containerSelector: string): void {
+export async function animateProjectCards(containerSelector: string): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
+
   const container = document.querySelector(containerSelector);
   if (!container) return;
 
@@ -92,12 +101,12 @@ export function animateProjectCards(containerSelector: string): void {
 
   const cards = container.querySelectorAll('[data-project-card]');
 
-  anime({
+  animeLib({
     targets: cards,
     opacity: [0, 1],
     translateY: [50, 0],
     duration: 900,
-    delay: anime.stagger(120),
+    delay: animeLib.stagger(120),
     easing: 'easeOutExpo',
   });
 }
@@ -105,7 +114,10 @@ export function animateProjectCards(containerSelector: string): void {
 /**
  * Animate cards with hover effect setup
  */
-export function setupCardHoverAnimation(containerSelector: string): void {
+export async function setupCardHoverAnimation(containerSelector: string): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
+
   const container = document.querySelector(containerSelector);
   if (!container) return;
 
@@ -113,7 +125,7 @@ export function setupCardHoverAnimation(containerSelector: string): void {
 
   cards.forEach((card) => {
     (card as HTMLElement).addEventListener('mouseenter', () => {
-      anime({
+      animeLib({
         targets: card,
         scale: [1, 1.03],
         duration: 300,
@@ -122,7 +134,7 @@ export function setupCardHoverAnimation(containerSelector: string): void {
     });
 
     (card as HTMLElement).addEventListener('mouseleave', () => {
-      anime({
+      animeLib({
         targets: card,
         scale: [1.03, 1],
         duration: 300,

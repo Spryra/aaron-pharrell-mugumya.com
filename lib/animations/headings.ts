@@ -1,20 +1,23 @@
 let anime: any;
 
-// Load anime.js dynamically
-if (typeof window !== 'undefined') {
-  import('animejs').then((module: any) => {
-    anime = module.default || module;
-  }).catch(() => {
-    console.warn('Failed to load animejs');
-  });
-}
+// Load anime.js dynamically with a small delay to ensure it's available
+const animePromise = typeof window !== 'undefined'
+  ? import('animejs').then((module: any) => {
+      anime = module.default || module;
+      return anime;
+    }).catch(() => {
+      console.warn('Failed to load animejs');
+      return null;
+    })
+  : Promise.resolve(null);
 
 /**
  * Animate section heading with horizontal clip-path reveal
  * Creates a professional "text sliding in" effect
  */
-export function animateSectionHeading(elementSelector: string): void {
-  if (!anime) return; // Skip if anime not loaded
+export async function animateSectionHeading(elementSelector: string): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
 
   const element = document.querySelector(elementSelector);
   if (!element) return;
@@ -28,7 +31,7 @@ export function animateSectionHeading(elementSelector: string): void {
   // Initial clip-path (text hidden from right)
   (element as HTMLElement).style.clipPath = 'inset(0 100% 0 0)';
 
-  anime({
+  animeLib({
     targets: element,
     clipPath: 'inset(0 0% 0 0)',
     duration: 1000,
@@ -39,7 +42,10 @@ export function animateSectionHeading(elementSelector: string): void {
 /**
  * Animate multiple headings with staggered reveal
  */
-export function animateSectionHeadings(containerSelector: string): void {
+export async function animateSectionHeadings(containerSelector: string): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
+
   const container = document.querySelector(containerSelector);
   if (!container) return;
 
@@ -58,11 +64,11 @@ export function animateSectionHeadings(containerSelector: string): void {
     (heading as HTMLElement).style.clipPath = 'inset(0 100% 0 0)';
   });
 
-  anime({
+  animeLib({
     targets: headings,
     clipPath: 'inset(0 0% 0 0)',
     duration: 1000,
-    delay: anime.stagger(100),
+    delay: animeLib.stagger(100),
     easing: 'easeOutExpo',
   });
 }
@@ -70,7 +76,10 @@ export function animateSectionHeadings(containerSelector: string): void {
 /**
  * Animate heading with gradient slide effect
  */
-export function animateGradientHeading(elementSelector: string): void {
+export async function animateGradientHeading(elementSelector: string): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
+
   const element = document.querySelector(elementSelector);
   if (!element) return;
 
@@ -80,7 +89,7 @@ export function animateGradientHeading(elementSelector: string): void {
     return;
   }
 
-  anime({
+  animeLib({
     targets: element,
     opacity: [0, 1],
     translateY: [30, 0],

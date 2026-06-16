@@ -10,12 +10,12 @@ interface ClientHomeWrapperProps {
 
 export default function ClientHomeWrapper({ children }: ClientHomeWrapperProps) {
   // Use the hook for stats animation on scroll
-  useAnimateOnScroll<HTMLDivElement>(() => {
+  useAnimateOnScroll<HTMLDivElement>(async () => {
     // Animate stats and counters
-    animateHeroStats('[data-stats-container]');
-    setTimeout(() => {
-      animateCounter('[data-counter-cgpa]', 4.38, 2000);
-      animateCounter('[data-counter-projects]', 2, 1500);
+    await animateHeroStats('[data-stats-container]');
+    setTimeout(async () => {
+      await animateCounter('[data-counter-cgpa]', 4.38, 2000);
+      await animateCounter('[data-counter-projects]', 2, 1500);
     }, 100);
   }, { threshold: 0.5 });
 

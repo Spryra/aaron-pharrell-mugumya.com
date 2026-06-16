@@ -1,19 +1,22 @@
 let anime: any;
 
-// Load anime.js dynamically on client side
-if (typeof window !== 'undefined') {
-  import('animejs').then((module: any) => {
-    anime = module.default || module;
-  }).catch(() => {
-    console.warn('Failed to load animejs');
-  });
-}
+// Load anime.js dynamically with a small delay to ensure it's available
+const animePromise = typeof window !== 'undefined'
+  ? import('animejs').then((module: any) => {
+      anime = module.default || module;
+      return anime;
+    }).catch(() => {
+      console.warn('Failed to load animejs');
+      return null;
+    })
+  : Promise.resolve(null);
 
 /**
  * Initialize nav link hover animations with underline slide effect
  */
-export function initNavLinkAnimation(): void {
-  if (!anime) return; // Skip if anime.js not loaded
+export async function initNavLinkAnimation(): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
 
   const navLinks = document.querySelectorAll('[data-nav-link]');
 
@@ -37,8 +40,8 @@ export function initNavLinkAnimation(): void {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     (link as HTMLElement).addEventListener('mouseenter', () => {
-      if (!prefersReducedMotion && anime) {
-        anime.set(underline, {
+      if (!prefersReducedMotion && animeLib) {
+        animeLib.set(underline, {
           width: '100%',
           duration: 300,
           easing: 'easeOutExpo',
@@ -49,8 +52,8 @@ export function initNavLinkAnimation(): void {
     });
 
     (link as HTMLElement).addEventListener('mouseleave', () => {
-      if (!prefersReducedMotion && anime) {
-        anime.set(underline, {
+      if (!prefersReducedMotion && animeLib) {
+        animeLib.set(underline, {
           width: '0%',
           duration: 300,
           easing: 'easeOutExpo',
@@ -65,7 +68,10 @@ export function initNavLinkAnimation(): void {
 /**
  * Animate nav links entrance on page load
  */
-export function animateNavLinksEntrance(): void {
+export async function animateNavLinksEntrance(): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
+
   const navLinks = document.querySelectorAll('[data-nav-link]');
 
   // Check prefers-reduced-motion
@@ -76,12 +82,12 @@ export function animateNavLinksEntrance(): void {
     return;
   }
 
-  anime({
+  animeLib({
     targets: navLinks,
     opacity: [0, 1],
     translateX: [-20, 0],
     duration: 600,
-    delay: anime.stagger(50),
+    delay: animeLib.stagger(50),
     easing: 'easeOutQuad',
   });
 }
@@ -89,7 +95,10 @@ export function animateNavLinksEntrance(): void {
 /**
  * Animate nav logo entrance
  */
-export function animateNavLogo(logoSelector: string = '[data-nav-logo]'): void {
+export async function animateNavLogo(logoSelector: string = '[data-nav-logo]'): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
+
   const logo = document.querySelector(logoSelector);
   if (!logo) return;
 
@@ -99,7 +108,7 @@ export function animateNavLogo(logoSelector: string = '[data-nav-logo]'): void {
     return;
   }
 
-  anime({
+  animeLib({
     targets: logo,
     opacity: [0, 1],
     translateX: [-30, 0],

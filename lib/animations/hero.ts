@@ -1,37 +1,23 @@
 let anime: any;
-let animeLoaded = false;
 
-// Load anime.js dynamically
-if (typeof window !== 'undefined') {
-  import('animejs').then((module: any) => {
-    anime = module.default || module;
-    animeLoaded = true;
-  }).catch(() => {
-    console.warn('Failed to load animejs');
-  });
-}
-
-// Helper function to wait for anime to load
-async function waitForAnime(): Promise<any> {
-  if (animeLoaded) return anime;
-  return new Promise(resolve => {
-    const checkInterval = setInterval(() => {
-      if (animeLoaded) {
-        clearInterval(checkInterval);
-        resolve(anime);
-      }
-    }, 50);
-    setTimeout(() => clearInterval(checkInterval), 5000); // Timeout after 5s
-  });
-}
+// Load anime.js dynamically with a small delay to ensure it's available
+const animePromise = typeof window !== 'undefined'
+  ? import('animejs').then((module: any) => {
+      anime = module.default || module;
+      return anime;
+    }).catch(() => {
+      console.warn('Failed to load animejs');
+      return null;
+    })
+  : Promise.resolve(null);
 
 /**
  * Animate hero heading with character-level reveal
  * Each character fades in and translates up in sequence
  */
 export async function animateHeroHeading(elementSelector: string): Promise<void> {
-  await waitForAnime();
-  if (!anime) return;
+  const animeLib = await animePromise;
+  if (!animeLib) return;
 
   const element = document.querySelector(elementSelector);
   if (!element) return;
@@ -54,13 +40,13 @@ export async function animateHeroHeading(elementSelector: string): Promise<void>
     return span;
   });
 
-  const timeline = anime.timeline();
+  const timeline = animeLib.timeline();
   timeline.add({
     targets: chars,
     opacity: [0, 1],
     translateY: [20, 0],
     duration: 800,
-    delay: anime.stagger(30),
+    delay: animeLib.stagger(30),
     easing: 'easeOutExpo',
   });
 }
@@ -74,8 +60,8 @@ export async function animateCounter(
   targetValue: number,
   duration: number = 2000
 ): Promise<void> {
-  await waitForAnime();
-  if (!anime) return;
+  const animeLib = await animePromise;
+  if (!animeLib) return;
 
   const el = document.querySelector(elementSelector);
   if (!el) return;
@@ -90,7 +76,7 @@ export async function animateCounter(
     return;
   }
 
-  anime({
+  animeLib({
     targets: { value: 0 },
     value: targetValue,
     duration,
@@ -110,8 +96,8 @@ export async function animateCounter(
  * Animate hero stats section with staggered appearance
  */
 export async function animateHeroStats(containerSelector: string): Promise<void> {
-  await waitForAnime();
-  if (!anime) return;
+  const animeLib = await animePromise;
+  if (!animeLib) return;
 
   const container = document.querySelector(containerSelector);
   if (!container) return;
@@ -122,7 +108,7 @@ export async function animateHeroStats(containerSelector: string): Promise<void>
     return;
   }
 
-  anime({
+  animeLib({
     targets: container,
     opacity: [0, 1],
     translateY: [20, 0],

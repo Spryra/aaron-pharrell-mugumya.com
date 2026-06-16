@@ -1,19 +1,22 @@
 let anime: any;
 
-// Load anime.js dynamically
-if (typeof window !== 'undefined') {
-  import('animejs').then((module: any) => {
-    anime = module.default || module;
-  }).catch(() => {
-    console.warn('Failed to load animejs');
-  });
-}
+// Load anime.js dynamically with a small delay to ensure it's available
+const animePromise = typeof window !== 'undefined'
+  ? import('animejs').then((module: any) => {
+      anime = module.default || module;
+      return anime;
+    }).catch(() => {
+      console.warn('Failed to load animejs');
+      return null;
+    })
+  : Promise.resolve(null);
 
 /**
  * Animate skill badges with pop-in elastic overshoot effect
  */
-export function animateBadges(containerSelector: string): void {
-  if (!anime) return; // Skip if anime not loaded
+export async function animateBadges(containerSelector: string): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
 
   const container = document.querySelector(containerSelector);
   if (!container) return;
@@ -30,12 +33,12 @@ export function animateBadges(containerSelector: string): void {
 
   const badges = container.querySelectorAll('[data-animate-badge]');
 
-  anime({
+  animeLib({
     targets: badges,
     opacity: [0, 1],
     scale: [0.5, 1],
     duration: 600,
-    delay: anime.stagger(50),
+    delay: animeLib.stagger(50),
     easing: 'easeOutElastic(1, 0.6)',
   });
 }
@@ -43,7 +46,10 @@ export function animateBadges(containerSelector: string): void {
 /**
  * Animate tech stack badges with sequential pop effect
  */
-export function animateTechBadges(containerSelector: string): void {
+export async function animateTechBadges(containerSelector: string): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
+
   const container = document.querySelector(containerSelector);
   if (!container) return;
 
@@ -59,12 +65,12 @@ export function animateTechBadges(containerSelector: string): void {
 
   const badges = container.querySelectorAll('[data-tech-badge]');
 
-  anime({
+  animeLib({
     targets: badges,
     opacity: [0, 1],
     scale: [0.3, 1],
     duration: 500,
-    delay: anime.stagger(40),
+    delay: animeLib.stagger(40),
     easing: 'easeOutElastic(1, 0.7)',
   });
 }
@@ -72,7 +78,10 @@ export function animateTechBadges(containerSelector: string): void {
 /**
  * Animate badges with fade and scale effect (less elastic, more professional)
  */
-export function animateProfessionalBadges(containerSelector: string): void {
+export async function animateProfessionalBadges(containerSelector: string): Promise<void> {
+  const animeLib = await animePromise;
+  if (!animeLib) return;
+
   const container = document.querySelector(containerSelector);
   if (!container) return;
 
@@ -88,12 +97,12 @@ export function animateProfessionalBadges(containerSelector: string): void {
 
   const badges = container.querySelectorAll('[data-badge]');
 
-  anime({
+  animeLib({
     targets: badges,
     opacity: [0, 1],
     scale: [0.7, 1],
     duration: 400,
-    delay: anime.stagger(30),
+    delay: animeLib.stagger(30),
     easing: 'easeOutQuad',
   });
 }
