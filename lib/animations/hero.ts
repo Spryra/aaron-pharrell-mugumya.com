@@ -1,11 +1,27 @@
 let anime: any;
+let animeLoaded = false;
 
 // Load anime.js dynamically
 if (typeof window !== 'undefined') {
   import('animejs').then((module: any) => {
     anime = module.default || module;
+    animeLoaded = true;
   }).catch(() => {
     console.warn('Failed to load animejs');
+  });
+}
+
+// Helper function to wait for anime to load
+async function waitForAnime(): Promise<any> {
+  if (animeLoaded) return anime;
+  return new Promise(resolve => {
+    const checkInterval = setInterval(() => {
+      if (animeLoaded) {
+        clearInterval(checkInterval);
+        resolve(anime);
+      }
+    }, 50);
+    setTimeout(() => clearInterval(checkInterval), 5000); // Timeout after 5s
   });
 }
 
@@ -13,8 +29,9 @@ if (typeof window !== 'undefined') {
  * Animate hero heading with character-level reveal
  * Each character fades in and translates up in sequence
  */
-export function animateHeroHeading(elementSelector: string): void {
-  if (!anime) return; // Skip if anime not loaded
+export async function animateHeroHeading(elementSelector: string): Promise<void> {
+  await waitForAnime();
+  if (!anime) return;
 
   const element = document.querySelector(elementSelector);
   if (!element) return;
@@ -52,11 +69,14 @@ export function animateHeroHeading(elementSelector: string): void {
  * Animate counter from 0 to target value
  * Used for CGPA and project counts
  */
-export function animateCounter(
+export async function animateCounter(
   elementSelector: string,
   targetValue: number,
   duration: number = 2000
-): void {
+): Promise<void> {
+  await waitForAnime();
+  if (!anime) return;
+
   const el = document.querySelector(elementSelector);
   if (!el) return;
 
@@ -89,7 +109,10 @@ export function animateCounter(
 /**
  * Animate hero stats section with staggered appearance
  */
-export function animateHeroStats(containerSelector: string): void {
+export async function animateHeroStats(containerSelector: string): Promise<void> {
+  await waitForAnime();
+  if (!anime) return;
+
   const container = document.querySelector(containerSelector);
   if (!container) return;
 

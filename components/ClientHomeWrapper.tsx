@@ -21,7 +21,9 @@ export default function ClientHomeWrapper({ children }: ClientHomeWrapperProps) 
 
   useEffect(() => {
     // Animate hero heading with character reveal on page load
-    animateHeroHeading('[data-hero-heading]');
+    animateHeroHeading('[data-hero-heading]').catch(() => {
+      // Silently fail if anime not loaded
+    });
   }, []);
 
   return <>{children}</>;
