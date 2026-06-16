@@ -2,7 +2,7 @@ let anime: any;
 
 // Load anime.js dynamically
 if (typeof window !== 'undefined') {
-  import('animejs').then(module => {
+  import('animejs').then((module: any) => {
     anime = module.default || module;
   }).catch(() => {
     console.warn('Failed to load animejs');
