@@ -1,5 +1,6 @@
 import { db } from './client';
 import { experience, projects, blogPosts } from './schema';
+import { sql } from 'drizzle-orm';
 
 function validateUrl(url: string | null): void {
   if (url && !url.startsWith('https://') && !url.startsWith('/')) {
@@ -281,7 +282,7 @@ sf.write('output_cloned_voice.wav', synthesized_audio, sr=22050)
 
 ## GitHub Repository
 [Spryra/EchoTwin](https://github.com/Spryra/EchoTwin)`,
-        imageUrl: '',
+        imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop',
         imageAlt: 'EchoTwin voice cloning waveform visualization',
         techStack: ['Python', 'PyTorch', 'Librosa', 'Vosk', 'NumPy', 'SciPy', 'FFmpeg'],
         githubUrl: 'https://github.com/Spryra/EchoTwin',
@@ -682,7 +683,7 @@ CREATE INDEX idx_products_category ON products(category);
 
 ## Live Application
 [haiq-frontend.vercel.app](https://haiq-frontend.vercel.app)`,
-        imageUrl: '',
+        imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop',
         imageAlt: 'HAIQ Bakery e-commerce storefront dashboard',
         techStack: ['React', 'Node.js', 'TypeScript', 'PostgreSQL', 'Stripe', 'Tailwind CSS', 'Docker', 'Vercel'],
         githubUrl: 'https://github.com/Spryra/HAIQ',
@@ -1360,7 +1361,7 @@ class ScoreBoard extends StatelessWidget {
 
 ## GitHub Repository
 [Spryra/AceGuru](https://github.com/Spryra/AceGuru)`,
-        imageUrl: '',
+        imageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=450&fit=crop',
         imageAlt: 'AceGuru card game gameplay interface',
         techStack: ['Flutter', 'Dart', 'Minimax AI', 'Provider', 'Hive', 'Firebase'],
         githubUrl: 'https://github.com/Spryra/AceGuru',
@@ -1538,7 +1539,7 @@ I learned to ask: "Is this good enough?" instead of "Is this optimal?"
 - Business fundamentals
 
 The journey continues...`,
-        coverImageUrl: 'https://res.cloudinary.com/aaron-mugumya/image/upload/c_scale,w_1200/blog-journey-hero.jpg',
+        coverImageUrl: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&h=600&fit=crop',
         coverImageAlt: 'Person working at computer',
         tags: ['Career', 'Learning', 'AI/ML'],
         featured: true,
@@ -1628,7 +1629,7 @@ The client's feedback shaped features more than my original vision.
 This project transformed me from someone who could code into someone who could ship. The constraints (time, budget, learning curve) forced practical decisions.
 
 The most important lesson: Done is better than perfect.`,
-        coverImageUrl: 'https://res.cloudinary.com/aaron-mugumya/image/upload/c_scale,w_1200/blog-haiq-hero.jpg',
+        coverImageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop',
         coverImageAlt: 'HAIQ bakery e-commerce platform',
         tags: ['Full-Stack', 'React', 'Node.js', 'E-Commerce'],
         featured: false,
@@ -1645,6 +1646,12 @@ The most important lesson: Done is better than perfect.`,
       validateUrl(proj.liveUrl);
     });
     blogPostsData.forEach((post) => validateUrl(post.coverImageUrl));
+
+    // Clear existing data (for idempotent seeding)
+    console.log('🧹 Clearing existing data...');
+    await db.delete(blogPosts);
+    await db.delete(projects);
+    await db.delete(experience);
 
     // Seed experience - TraceCorp and ISBAT entries
     await db.insert(experience).values(experienceData);
