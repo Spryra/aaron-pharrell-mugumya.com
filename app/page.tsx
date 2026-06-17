@@ -61,9 +61,17 @@ export default async function Home() {
               {/* Left: Text */}
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <h1 className="text-5xl sm:text-6xl font-bold font-display leading-tight" data-hero-heading>
-                    AI Engineer &<br />
-                    <span className="bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent">
+                  <h1
+                    className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display leading-[1.1] tracking-tight"
+                    data-hero-heading
+                  >
+                    <span className="block" data-hero-line>
+                      AI Engineer &amp;
+                    </span>
+                    <span
+                      className="block bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary bg-clip-text text-transparent"
+                      data-hero-line
+                    >
                       Full-Stack Builder
                     </span>
                   </h1>

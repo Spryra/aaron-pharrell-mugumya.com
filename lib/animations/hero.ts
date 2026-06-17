@@ -34,25 +34,18 @@ export async function animateHeroHeading(elementSelector: string): Promise<void>
     return;
   }
 
-  const text = element.textContent || '';
-  element.textContent = '';
+  // Animate the heading's line spans (preserving the gradient markup and
+  // line breaks) rather than rebuilding it character-by-character, which
+  // would strip spaces, line breaks, and the gradient styling.
+  const lines = element.querySelectorAll('[data-hero-line]');
+  const targets = lines.length ? lines : [element];
 
-  const chars = text.split('').map((char) => {
-    const span = document.createElement('span');
-    span.textContent = char;
-    span.style.opacity = '0';
-    span.style.display = 'inline-block';
-    (element as HTMLElement).appendChild(span);
-    return span;
-  });
-
-  const timeline = animeLib.timeline();
-  timeline.add({
-    targets: chars,
+  animeLib({
+    targets,
     opacity: [0, 1],
-    translateY: [20, 0],
+    translateY: [24, 0],
     duration: 800,
-    delay: animeLib.stagger(30),
+    delay: animeLib.stagger(120),
     easing: 'easeOutExpo',
   });
 }

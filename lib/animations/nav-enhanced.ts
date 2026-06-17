@@ -120,73 +120,14 @@ export async function animateThemeToggle(buttonSelector: string = '[aria-label="
 }
 
 /**
- * Enhanced nav link hover with text shadow glow
+ * The nav-link hover underline is handled with a pure-CSS `::after`
+ * pseudo-element + `scale-x` transition in Navigation.tsx. CSS is more
+ * reliable than driving per-link hover state through anime.js (which races
+ * with React StrictMode / Fast Refresh re-running the initializer), so this
+ * function is intentionally a no-op kept for backwards compatibility.
  */
 export async function animateNavLinkHoverEnhanced(): Promise<void> {
-  const animeLib = await animePromise;
-  if (!animeLib) return;
-
-  const navLinks = document.querySelectorAll('[data-nav-link]');
-  if (!navLinks.length) return;
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    return;
-  }
-
-  navLinks.forEach((link) => {
-    // Create underline element if not exists
-    let underline = link.querySelector('[data-nav-underline]') as HTMLElement;
-    if (!underline) {
-      underline = document.createElement('div');
-      underline.setAttribute('data-nav-underline', '');
-      underline.className =
-        'absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-light-accent to-light-accent-secondary dark:from-dark-accent dark:to-dark-accent-secondary';
-      underline.style.width = '0%';
-      underline.style.transition = 'none';
-      (link as HTMLElement).style.position = 'relative';
-      (link as HTMLElement).appendChild(underline);
-    }
-
-    // Hover animation
-    (link as HTMLElement).addEventListener('mouseenter', () => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      // Underline expands
-      animeLib.set(underline, {
-        width: '100%',
-        duration: 300,
-        easing: 'easeOutExpo',
-      });
-
-      // Text gets slightly brighter (via opacity of pseudo-element)
-      animeLib({
-        targets: link,
-        letterSpacing: '0.5px',
-        duration: 200,
-        easing: 'easeOutQuad',
-      });
-    });
-
-    // Hover out animation
-    (link as HTMLElement).addEventListener('mouseleave', () => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      // Underline retracts
-      animeLib.set(underline, {
-        width: '0%',
-        duration: 300,
-        easing: 'easeOutExpo',
-      });
-
-      // Letter spacing resets
-      animeLib({
-        targets: link,
-        letterSpacing: '0px',
-        duration: 200,
-        easing: 'easeOutQuad',
-      });
-    });
-  });
+  return;
 }
 
 /**

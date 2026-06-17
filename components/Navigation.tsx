@@ -112,10 +112,10 @@ export default function Navigation() {
               href={link.href}
               prefetch={true}
               data-nav-link
-              className={`transition font-medium text-sm ${
+              className={`relative transition font-medium text-sm after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:origin-left after:bg-gradient-to-r after:from-light-accent after:to-light-accent-secondary dark:after:from-dark-accent dark:after:to-dark-accent-secondary after:transition-transform after:duration-300 after:ease-out ${
                 isActive(pathname, link.href)
-                  ? 'text-light-accent dark:text-dark-accent underline'
-                  : 'hover:text-light-accent dark:hover:text-dark-accent'
+                  ? 'text-light-accent dark:text-dark-accent after:scale-x-100'
+                  : 'hover:text-light-accent dark:hover:text-dark-accent after:scale-x-0 hover:after:scale-x-100'
               }`}
               aria-current={isActive(pathname, link.href) ? 'page' : undefined}
             >
