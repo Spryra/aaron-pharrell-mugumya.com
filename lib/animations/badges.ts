@@ -12,7 +12,8 @@ const animePromise = typeof window !== 'undefined'
   : Promise.resolve(null);
 
 /**
- * Animate skill badges with pop-in elastic overshoot effect
+ * Animate skill badges with playful pop-in elastic overshoot effect
+ * Elastic(1, 0.6) creates satisfying bounce - signals category transition with delight
  */
 export async function animateBadges(containerSelector: string): Promise<void> {
   const animeLib = await animePromise;

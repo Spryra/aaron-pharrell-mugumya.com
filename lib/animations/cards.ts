@@ -80,7 +80,9 @@ export async function animateBlogCards(containerSelector: string): Promise<void>
 }
 
 /**
- * Animate project cards with more prominent cascade
+ * Animate project cards with prominent cascade
+ * Projects are the showcase work, so they get the most dramatic entrance
+ * Deepest offset (50px), longest duration (900ms), widest stagger (120ms)
  */
 export async function animateProjectCards(containerSelector: string): Promise<void> {
   const animeLib = await animePromise;

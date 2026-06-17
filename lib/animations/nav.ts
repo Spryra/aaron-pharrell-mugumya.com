@@ -67,6 +67,8 @@ export async function initNavLinkAnimation(): Promise<void> {
 
 /**
  * Animate nav links entrance on page load
+ * Gentle easeOutQuad (not Expo) because nav is functional, not focal
+ * Creates choreographed sequence: logo → links
  */
 export async function animateNavLinksEntrance(): Promise<void> {
   const animeLib = await animePromise;

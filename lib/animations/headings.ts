@@ -13,7 +13,8 @@ const animePromise = typeof window !== 'undefined'
 
 /**
  * Animate section heading with horizontal clip-path reveal
- * Creates a professional "text sliding in" effect
+ * Creates a professional "curtain opening" effect
+ * Text slides in from right, stops at full visibility
  */
 export async function animateSectionHeading(elementSelector: string): Promise<void> {
   const animeLib = await animePromise;
@@ -28,9 +29,10 @@ export async function animateSectionHeading(elementSelector: string): Promise<vo
     return;
   }
 
-  // Initial clip-path (text hidden from right)
+  // Initial state: text hidden from right
   (element as HTMLElement).style.clipPath = 'inset(0 100% 0 0)';
 
+  // Animate clip-path from hidden to visible
   animeLib({
     targets: element,
     clipPath: 'inset(0 0% 0 0)',
