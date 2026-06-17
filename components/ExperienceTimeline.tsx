@@ -52,7 +52,7 @@ export function ExperienceTimeline({ experiences }: ExperienceTimelineProps) {
                     alt={exp.logoAlt}
                     width={80}
                     height={80}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain p-1.5"
                     quality={85}
                   />
                 </div>
@@ -112,7 +112,7 @@ export function ExperienceTimeline({ experiences }: ExperienceTimelineProps) {
                     alt={exp.logoAlt}
                     width={60}
                     height={60}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain p-1.5"
                     quality={85}
                   />
                 </div>
