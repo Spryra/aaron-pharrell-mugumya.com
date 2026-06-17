@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
-import { initNavLinkAnimation, animateNavLogo, animateNavLinksEntrance } from '@/lib/animations/nav';
+import { initNavAnimationsEnhanced, animateMobileMenu } from '@/lib/animations/nav-enhanced';
 
 function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -58,15 +58,9 @@ export default function Navigation() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Initialize nav link animations on mount
-    initNavLinkAnimation().catch(() => {
-      // Silently fail if animation fails to load
-    });
-    animateNavLogo('[data-nav-logo]').catch(() => {
-      // Silently fail if animation fails to load
-    });
-    animateNavLinksEntrance().catch(() => {
-      // Silently fail if animation fails to load
+    // Initialize enhanced nav animations on mount
+    initNavAnimationsEnhanced().catch(() => {
+      // Silently fail if animations fail to load
     });
   }, []);
 
@@ -87,7 +81,14 @@ export default function Navigation() {
   }, [mobileOpen]);
 
   const handleLinkClick = () => {
-    setMobileOpen(false);
+    animateMobileMenu(false).catch(() => {});
+    setTimeout(() => setMobileOpen(false), 200);
+  };
+
+  const toggleMobileMenu = () => {
+    const newState = !mobileOpen;
+    setMobileOpen(newState);
+    animateMobileMenu(newState).catch(() => {});
   };
 
   return (
@@ -126,7 +127,7 @@ export default function Navigation() {
 
         {/* Mobile Menu Button */}
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
+          onClick={toggleMobileMenu}
           className="lg:hidden p-2 rounded-lg hover:bg-light-surface dark:hover:bg-dark-surface transition"
           aria-label="Toggle menu"
         >
