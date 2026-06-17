@@ -1,6 +1,5 @@
 import { db } from './client';
 import { experience, projects, blogPosts } from './schema';
-import { sql } from 'drizzle-orm';
 
 function validateUrl(url: string | null): void {
   if (url && !url.startsWith('https://') && !url.startsWith('/')) {
