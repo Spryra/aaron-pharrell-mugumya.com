@@ -3,10 +3,16 @@ let anime: any;
 // Load anime.js dynamically with a small delay to ensure it's available
 const animePromise = typeof window !== 'undefined'
   ? import('animejs').then((module: any) => {
+      // anime.js default export is the anime function
       anime = module.default || module;
+      // Verify it's callable
+      if (typeof anime !== 'function') {
+        console.warn('anime.js loaded but is not a function', anime);
+        return null;
+      }
       return anime;
-    }).catch(() => {
-      console.warn('Failed to load animejs');
+    }).catch((error) => {
+      console.warn('Failed to load animejs:', error);
       return null;
     })
   : Promise.resolve(null);

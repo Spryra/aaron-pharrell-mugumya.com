@@ -4,9 +4,13 @@ let anime: any;
 const animePromise = typeof window !== 'undefined'
   ? import('animejs').then((module: any) => {
       anime = module.default || module;
+      if (typeof anime !== 'function') {
+        console.warn('anime.js loaded but is not a function', anime);
+        return null;
+      }
       return anime;
-    }).catch(() => {
-      console.warn('Failed to load animejs');
+    }).catch((error) => {
+      console.warn('Failed to load animejs:', error);
       return null;
     })
   : Promise.resolve(null);
