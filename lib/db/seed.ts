@@ -281,7 +281,7 @@ sf.write('output_cloned_voice.wav', synthesized_audio, sr=22050)
 
 ## GitHub Repository
 [Spryra/EchoTwin](https://github.com/Spryra/EchoTwin)`,
-        imageUrl: null,
+        imageUrl: '',
         imageAlt: 'EchoTwin voice cloning waveform visualization',
         techStack: ['Python', 'PyTorch', 'Librosa', 'Vosk', 'NumPy', 'SciPy', 'FFmpeg'],
         githubUrl: 'https://github.com/Spryra/EchoTwin',
@@ -682,7 +682,7 @@ CREATE INDEX idx_products_category ON products(category);
 
 ## Live Application
 [haiq-frontend.vercel.app](https://haiq-frontend.vercel.app)`,
-        imageUrl: null,
+        imageUrl: '',
         imageAlt: 'HAIQ Bakery e-commerce storefront dashboard',
         techStack: ['React', 'Node.js', 'TypeScript', 'PostgreSQL', 'Stripe', 'Tailwind CSS', 'Docker', 'Vercel'],
         githubUrl: 'https://github.com/Spryra/HAIQ',
@@ -1360,7 +1360,7 @@ class ScoreBoard extends StatelessWidget {
 
 ## GitHub Repository
 [Spryra/AceGuru](https://github.com/Spryra/AceGuru)`,
-        imageUrl: null,
+        imageUrl: '',
         imageAlt: 'AceGuru card game gameplay interface',
         techStack: ['Flutter', 'Dart', 'Minimax AI', 'Provider', 'Hive', 'Firebase'],
         githubUrl: 'https://github.com/Spryra/AceGuru',
@@ -1470,7 +1470,7 @@ The deployment delivered:
 ## Conclusion
 
 Building production AI systems is about far more than the algorithm. It requires careful engineering, monitoring, and iteration. The skills I gained here form the foundation of my approach to AI/ML engineering.`,
-        coverImageUrl: null,
+        coverImageUrl: '',
         coverImageAlt: 'Time series forecasting visualization',
         tags: ['AI', 'Machine Learning', 'Production', 'Python'],
         featured: true,
