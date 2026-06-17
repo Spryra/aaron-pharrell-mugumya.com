@@ -72,28 +72,32 @@ export async function animateCounter(
   const el = document.querySelector(elementSelector);
   if (!el) return;
 
-  // Check prefers-reduced-motion
+  // Whole numbers (project counts) render as integers; values with a
+  // fractional part (e.g. CGPA 4.38) keep two decimals.
+  const isDecimal = !Number.isInteger(targetValue);
+  const format = (v: number) =>
+    isDecimal ? v.toFixed(2) : Math.round(v).toString();
+
+  // Check prefers-reduced-motion — show the final value immediately.
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    if (targetValue === 4.38) {
-      el.textContent = targetValue.toFixed(2);
-    } else {
-      el.textContent = Math.floor(targetValue).toString();
-    }
+    el.textContent = format(targetValue);
     return;
   }
 
+  // Animate a plain object's `value` and read it back in update(). In
+  // anime.js v3, `anim.progress` is 0–100, so reading the eased target
+  // value directly is the reliable way to drive the counter.
+  const counter = { value: 0 };
   animeLib({
-    targets: { value: 0 },
+    targets: counter,
     value: targetValue,
     duration,
     easing: 'easeOutExpo',
-    update(anim: any) {
-      const currentValue = anim.progress * targetValue;
-      if (targetValue === 4.38 || targetValue > 3) {
-        el.textContent = currentValue.toFixed(2);
-      } else {
-        el.textContent = Math.floor(currentValue).toString();
-      }
+    update() {
+      el.textContent = format(counter.value);
+    },
+    complete() {
+      el.textContent = format(targetValue);
     },
   });
 }

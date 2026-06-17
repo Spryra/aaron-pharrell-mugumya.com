@@ -16,7 +16,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",
     "@upstash/redis": "^1.25.0",
-    "animejs": "^4.4.1",
+    "animejs": "^3.2.2",
     "cloudinary": "^1.40.0",
     "clsx": "^2.0.0",
     "drizzle-orm": "^0.29.0",

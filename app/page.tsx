@@ -6,9 +6,12 @@ import FeaturedProjects from '@/components/sections/FeaturedProjects';
 import ClientHomeWrapper from '@/components/ClientHomeWrapper';
 import { db } from '@/lib/db/client';
 import { projects as projectsTable } from '@/lib/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, count } from 'drizzle-orm';
 
 export const revalidate = 3600; // Cache for 1 hour
+
+// Aaron's ISBAT cumulative GPA — shown in the hero stats.
+const ISBAT_CGPA = 4.38;
 
 // Fetch featured projects from database
 async function getFeaturedProjects() {
@@ -26,6 +29,17 @@ async function getFeaturedProjects() {
   }
 }
 
+// Total number of projects — drives the "Live Projects" hero stat.
+async function getProjectCount(): Promise<number> {
+  try {
+    const [row] = await db.select({ value: count() }).from(projectsTable);
+    return row?.value ?? 0;
+  } catch (error) {
+    console.error('Failed to count projects:', error);
+    return 0;
+  }
+}
+
 export const metadata = {
   title: 'Aaron Pharrell Mugumya | AI Engineer & Full-Stack Developer',
   description: 'AI Engineer and Full-Stack Developer building intelligent automation systems for East Africa. Founder of JuniorReactive.',
@@ -33,6 +47,7 @@ export const metadata = {
 
 export default async function Home() {
   const featuredProjects = await getFeaturedProjects();
+  const projectCount = await getProjectCount();
 
   return (
     <main className="min-h-screen bg-white dark:bg-dark-bg text-dark-bg dark:text-dark-text transition-colors">
@@ -69,11 +84,23 @@ export default async function Home() {
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-4 py-4 border-y border-light-border dark:border-dark-border" data-stats-container>
                   <div>
-                    <div className="text-2xl font-bold text-light-accent dark:text-dark-accent" data-counter-cgpa>0.00</div>
+                    <div
+                      className="text-2xl font-bold text-light-accent dark:text-dark-accent"
+                      data-counter-cgpa
+                      data-target={ISBAT_CGPA}
+                    >
+                      {ISBAT_CGPA.toFixed(2)}
+                    </div>
                     <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">ISBAT CGPA</p>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-light-accent dark:text-dark-accent" data-counter-projects>0</div>
+                    <div
+                      className="text-2xl font-bold text-light-accent dark:text-dark-accent"
+                      data-counter-projects
+                      data-target={projectCount}
+                    >
+                      {projectCount}
+                    </div>
                     <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">Live Projects</p>
                   </div>
                 </div>

@@ -14,12 +14,23 @@ export default function ClientHomeWrapper({ children }: ClientHomeWrapperProps) 
       // Silently fail if anime not loaded
     });
 
+    // Read the real targets from the server-rendered data attributes so the
+    // counters always animate to the values shown in the DOM.
+    const readTarget = (selector: string, fallback: number) => {
+      const el = document.querySelector(selector);
+      const raw = el?.getAttribute('data-target');
+      const parsed = raw != null ? parseFloat(raw) : NaN;
+      return Number.isFinite(parsed) ? parsed : fallback;
+    };
+
     // Animate stats when stats container enters viewport
     const handleStatsAnimation = async () => {
       await animateHeroStats('[data-stats-container]');
+      const cgpaTarget = readTarget('[data-counter-cgpa]', 4.38);
+      const projectsTarget = readTarget('[data-counter-projects]', 0);
       setTimeout(async () => {
-        await animateCounter('[data-counter-cgpa]', 4.38, 2000).catch(() => {});
-        await animateCounter('[data-counter-projects]', 2, 1500).catch(() => {});
+        await animateCounter('[data-counter-cgpa]', cgpaTarget, 2000).catch(() => {});
+        await animateCounter('[data-counter-projects]', projectsTarget, 1500).catch(() => {});
       }, 100);
     };
 
@@ -39,6 +50,8 @@ export default function ClientHomeWrapper({ children }: ClientHomeWrapperProps) 
 
       return () => observer.disconnect();
     }
+
+    return undefined;
   }, []);
 
   return <>{children}</>;
